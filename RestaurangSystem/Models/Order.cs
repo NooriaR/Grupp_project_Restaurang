@@ -10,7 +10,7 @@ namespace RestaurangSystem.Models
         //Attributes
         public List<MenuItem> OrdereredItems = new List<MenuItem>();
         public List<Guest> Guests = new List<Guest>();
-        // Enum OrderStatus Status behöver en enum class som heter OrderStatus
+        OrderStatus Status;
         public DateTime OrderTime;
 
         //Methods
@@ -31,4 +31,12 @@ namespace RestaurangSystem.Models
 
         }
     }
+
+    enum OrderStatus
+    {
+        Pending,
+        InProgress,
+        Completed,
+        Cancelled
+    }   
 }

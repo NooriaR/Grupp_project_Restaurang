@@ -33,20 +33,20 @@ namespace RestaurangSystem.Models
                 {
                     var choice = AnsiConsole.Prompt(
                         new SelectionPrompt<string>()
-                            .Title("[green]Vad vill du göra?[/]")
-                            .AddChoices("Lägg till rätt", "Visa menyn", "Avsluta"));
+                            .Title("[green]What do you want to do?[/]")
+                            .AddChoices("Add MenuItem", "Show Menu", "Finish"));
 
                     switch (choice)
                     {
-                        case "Lägg till rätt":
-                            Console.WriteLine("Här kommer AddMenuItem()");
+                        case "Add MenuItem":
+                            Console.WriteLine("This is the AddMenuItem()");
                             break;
 
-                        case "Visa menyn":
-                            Console.WriteLine("Här kommer ShowMenuItems()");
+                        case "Show Menu":
+                            Console.WriteLine("This is the ShowMenuItems()");
                             break;
 
-                        case "Avsluta":
+                        case "Finish":
                             running = false;
                             break;
                     }

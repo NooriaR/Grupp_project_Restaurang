@@ -1,3 +1,4 @@
+
 namespace RestaurangSystem.Models;
 
 // Representerar en beställning i restaurangen.
@@ -8,6 +9,9 @@ public class Order
 
     // Sparar alla maträtter som ingår i beställningen.
     public List<MenuItem> Items { get; set; } = new List<MenuItem>();
+
+    // Sparar gäster som hör till beställningen.
+    public List<Guest> Guests { get; set; } = new List<Guest>();
 
     // Visar beställningens aktuella status.
     public OrderStatus Status { get; set; } = OrderStatus.Created;
@@ -25,5 +29,17 @@ public class Order
     public void AddToOrder(MenuItem item)
     {
         Items.Add(item);
+    }
+
+    // Tar bort en maträtt från beställningen.
+    public void RemoveFromOrder(MenuItem item)
+    {
+        Items.Remove(item);
+    }
+
+    // Beräknar det totala priset för beställningen.
+    public decimal CalculateSumPrice()
+    {
+        return Items.Sum(item => item.Pris);
     }
 }

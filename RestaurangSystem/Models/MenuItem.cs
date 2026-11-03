@@ -6,6 +6,7 @@ namespace RestaurangSystem.Models
 {
     public class MenuItem
     {
+        public int Id { get; set; }
         public string Namn { get; set; }
         public decimal Pris { get; set; }
         public string innehåll { get; set; }

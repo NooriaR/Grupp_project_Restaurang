@@ -1,4 +1,5 @@
-﻿namespace RestaurangSystem.Services
+﻿using Spectre.Console;
+namespace RestaurangSystem.Services
 {
     public class DataStore<T> where T : IIdentify
     {
@@ -16,9 +17,18 @@
         {
             items.Remove(item);
         }
-        public void FindItem()
+        // Finds the first item that matches a condition, returns null if nothing is found
+        public T? FindItem(Func<T, bool> predicate)
         {
-
+            try
+            {
+                return items.FirstOrDefault(predicate);
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Fel vid sökning: {ex.Message}[/]");
+                return default;
+            }
         }
         public void GetItem()
         {

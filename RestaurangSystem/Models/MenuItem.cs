@@ -13,10 +13,10 @@ namespace RestaurangSystem.Models
     public class MenuItem : IIdentify
     {
         public int Id { get; set; }
-        public string Namn { get; set; }
-        public decimal Pris { get; set; }
-        public string innehåll { get; set; }
-        public bool isVegeterian { get; set; }
-        public Category category { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public string Content { get; set; }
+        public bool IsVegetarian { get; set; }
+        public Category Category { get; set; }
     }
 }

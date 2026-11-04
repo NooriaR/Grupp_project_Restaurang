@@ -2,7 +2,7 @@
 {
     public class DataStore<T> where T : IIdentify
     {
-        List<T> items = new List<T>();
+        public List<T> items = new List<T>();
 
         public void AddItem(T item)
         {
@@ -10,9 +10,9 @@
             item.Id = items.Select(i => i.Id).DefaultIfEmpty(0).Max() + 1;
 
         }
-        public void RemoveItem()
+        public void RemoveItem(T item)
         {
-
+            items.Remove(item);
         }
         public void FindItem()
         {

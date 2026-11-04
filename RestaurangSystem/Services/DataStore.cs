@@ -1,6 +1,6 @@
 ﻿using RestaurangSystem.Models;
 using System.Text.Json;
-
+using Spectre.Console;
 namespace RestaurangSystem.Services
 {
     public class DataStore<T> where T : IIdentify
@@ -27,19 +27,50 @@ namespace RestaurangSystem.Services
         }
         public void SaveToJson()
         {
-            string json = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText("data.json", json);
+            try
+            {
+                string json = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText("data.json", json);
+                AnsiConsole.MarkupLine("[green]Data sparades till data.json[/]");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                AnsiConsole.MarkupLine("[red]Kunde inte spara: saknar behörighet till filen.[/]");
+            }
+            catch (IOException ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Kunde inte spara filen:[/] {Markup.Escape(ex.Message)}");
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Oväntat fel vid sparning:[/] {Markup.Escape(ex.Message)}");
+            }
         }
         public void LoadFromJson()
         {
-            if (!File.Exists("data.json"))
+            try
             {
-                return;
+                string json = File.ReadAllText("data.json");
+                items = JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+                AnsiConsole.MarkupLine($"[green]Läste in {items.Count} objekt från data.json[/]");
             }
-
-            string json = File.ReadAllText("data.json");
-            items = JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+            catch (FileNotFoundException)
+            {
+                AnsiConsole.MarkupLine("[yellow]Ingen sparad data hittades, startar med tom lista.[/]");
+            }
+            catch (JsonException)
+            {
+                AnsiConsole.MarkupLine("[red]Filen data.json är trasig eller har fel format. Startar med tom lista.[/]");
+                items = new List<T>();
+            }
+            catch (IOException ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Kunde inte läsa filen:[/] {Markup.Escape(ex.Message)}");
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Oväntat fel vid inläsning:[/] {Markup.Escape(ex.Message)}");
+            }
         }
     }
-    
 }

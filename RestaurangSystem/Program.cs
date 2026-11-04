@@ -3,10 +3,6 @@ using RestaurangSystem.Models;
 using RestaurangSystem.Services;
 using RestaurangSystem.UI;
 using Spectre.Console;
-using RestaurangSystem.Services;   
-
-using RestaurangSystem.UI;
-
 namespace RestaurangSystem
 {
     internal class Program

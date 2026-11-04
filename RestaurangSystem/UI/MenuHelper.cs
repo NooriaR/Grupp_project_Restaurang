@@ -50,7 +50,7 @@ namespace RestaurangSystem.UI
         public static void ShowMenuItems(DataStore<MenuItem> dataStore)
         {
             // 1. Check if there is anything to show
-            if (dataStore.Items.Count == 0)
+            if (dataStore.items.Count == 0)
             {
                 AnsiConsole.MarkupLine("[yellow]The menu is empty.[/]");
                 return;
@@ -63,7 +63,7 @@ namespace RestaurangSystem.UI
             table.AddColumn("Price");
 
             // 3. Add one row per menu item
-            foreach (var item in dataStore.Items)
+            foreach (var item in dataStore.items)
             {
                 table.AddRow(
                     item.Id.ToString(),

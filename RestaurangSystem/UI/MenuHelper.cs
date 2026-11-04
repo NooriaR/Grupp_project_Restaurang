@@ -1,7 +1,9 @@
-﻿using System;
+﻿using RestaurangSystem.Models;
+using RestaurangSystem.Services;
+using Spectre.Console;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Spectre.Console;
 
 namespace RestaurangSystem.UI
 {
@@ -45,9 +47,33 @@ namespace RestaurangSystem.UI
         {
 
         }
-        public static void ShowMenuItems()
+        public static void ShowMenuItems(DataStore<MenuItem> dataStore)
         {
-            
+            // 1. Check if there is anything to show
+            if (dataStore.items.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[yellow]The menu is empty.[/]");
+                return;
+            }
+
+            // 2. Create the table and its columns
+            var table = new Table();
+            table.AddColumn("Id");
+            table.AddColumn("Name");
+            table.AddColumn("Price");
+
+            // 3. Add one row per menu item
+            foreach (var item in dataStore.items)
+            {
+                table.AddRow(
+                    item.Id.ToString(),
+                    item.Name,
+                    $"{item.Price:F2} kr");
+            }
+
+            // 4. Draw the table
+            AnsiConsole.Write(table);
+
         }
         public static void LogInMenu()
         {

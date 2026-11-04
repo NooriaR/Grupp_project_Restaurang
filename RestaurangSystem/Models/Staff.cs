@@ -7,7 +7,7 @@ namespace RestaurangSystem.Models
     public class Staff : Users
     {
         //Attributes
-        public string Namn { get; set; }
+        public string Name { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
         public bool IsLoggedIn { get; set; }

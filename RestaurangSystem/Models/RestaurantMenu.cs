@@ -57,10 +57,11 @@ namespace RestaurangSystem.Models
             // Skapar ett nytt maträttsobjekt
             MenuItem newItem = new MenuItem
             {
-                Namn = namn,
-                Pris = pris,
-                innehåll = innehall,
-                isVegeterian = isVegeterian
+                Name = namn,
+                Price = pris,
+                Content = innehall,
+                IsVegetarian = isVegeterian,
+                Category = Enum.Parse<Category>(category)
             };
 
             // Lägger till maträtten i listan

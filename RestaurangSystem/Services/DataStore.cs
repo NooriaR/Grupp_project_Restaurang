@@ -1,11 +1,8 @@
-﻿using RestaurangSystem.Models;
-using System.Text.Json;
-using Spectre.Console;
-namespace RestaurangSystem.Services
+﻿namespace RestaurangSystem.Services
 {
     public class DataStore<T> where T : IIdentify
     {
-        List<T> items = new List<T>();
+        public List<T> items = new List<T>();
 
         public void AddItem(T item)
         {
@@ -16,6 +13,9 @@ namespace RestaurangSystem.Services
         public void RemoveItem()
         {
 
+        public void RemoveItem(T item)
+        {
+            items.Remove(item);
         }
         public void FindItem()
         {

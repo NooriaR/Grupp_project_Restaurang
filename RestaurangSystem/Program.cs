@@ -1,6 +1,7 @@
-﻿
-using System;
+﻿using System;
 using RestaurangSystem.Models;
+using RestaurangSystem.Services;
+using RestaurangSystem.UI;
 using Spectre.Console;
 using RestaurangSystem.Services;   
 
@@ -12,6 +13,9 @@ namespace RestaurangSystem
     {
         static void Main(string[] args)
         {
+
+
+
              DataStore<MenuItem> dataStore = new DataStore<MenuItem>();
             MenuItem item = new MenuItem { Id = 1, Name = "Pizza", Price = 99.99m };
             dataStore.items.Add(item); // Add the item to the data store
@@ -61,11 +65,9 @@ namespace RestaurangSystem
                 }
             }
             MenuHelper.ShowOrderMenu();
-
-            //AddChoices("Create new order", "Add item to order", "Show orders", "Back"));
-            //case "Beställningar":
-            //ShowOrderMenu();
-            //break;
         }
     }
+
+    // Tillfällig testklass (ta bort efteråt)
+    
 }

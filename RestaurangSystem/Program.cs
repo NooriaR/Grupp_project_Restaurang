@@ -1,6 +1,7 @@
 ﻿
 using System;
 using RestaurangSystem.Models;
+using Spectre.Console;
 
 namespace RestaurangSystem
 {
@@ -16,11 +17,11 @@ namespace RestaurangSystem
             // Programmets huvudmeny
             while (running)
             {
-                Console.WriteLine("\n===== RESTAURANGSYSTEM =====");
-                Console.WriteLine("1. Lägg till maträtt");
-                Console.WriteLine("2. Avsluta");
+                AnsiConsole.WriteLine("\n===== RESTAURANGSYSTEM =====");
+                AnsiConsole.WriteLine("1. Lägg till maträtt");
+                AnsiConsole.WriteLine("2. Avsluta");
 
-                Console.Write("Välj alternativ: ");
+                AnsiConsole.Write("Välj alternativ: ");
                 string choice = Console.ReadLine();
 
                 // Kontrollerar användarens val

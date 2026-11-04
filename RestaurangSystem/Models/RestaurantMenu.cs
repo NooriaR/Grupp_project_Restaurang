@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Spectre.Console;
 
 namespace RestaurangSystem.Models
 {
@@ -13,23 +14,23 @@ namespace RestaurangSystem.Models
         public void AddMenuItem()
         {
             // Hämtar maträttens namn
-            Console.Write("Ange maträttens namn: ");
+            AnsiConsole.Write("Ange maträttens namn: ");
             string namn = Console.ReadLine();
 
             // Hämtar priset och kontrollerar att det är giltigt
-            Console.Write("Ange pris: ");
+            AnsiConsole.Write("Ange pris: ");
             if (!decimal.TryParse(Console.ReadLine(), out decimal pris) || pris < 0)
             {
-                Console.WriteLine("Ogiltigt pris!");
+                AnsiConsole.WriteLine("Ogiltigt pris!");
                 return;
             }
 
             // Hämtar maträttens innehåll
-            Console.Write("Ange innehåll: ");
+            AnsiConsole.Write("Ange innehåll: ");
             string innehall = Console.ReadLine();
 
             // Frågar om maträtten är vegetarisk
-            Console.Write("Är maträtten vegetarisk? (ja/nej): ");
+            AnsiConsole.Write("Är maträtten vegetarisk? (ja/nej): ");
             string svar = Console.ReadLine().ToLower();
 
             bool isVegeterian;
@@ -49,7 +50,7 @@ namespace RestaurangSystem.Models
             }
 
             // Hämtar maträttens kategori
-            Console.Write("Ange kategori: ");
+            AnsiConsole.Write("Ange kategori: ");
             string category = Console.ReadLine();
 
             // Skapar ett nytt maträttsobjekt
@@ -64,7 +65,7 @@ namespace RestaurangSystem.Models
             // Lägger till maträtten i listan
             MenuItems.Add(newItem);
 
-            Console.WriteLine($"{namn} har lagts till i menyn!");
+            AnsiConsole.WriteLine($"{namn} har lagts till i menyn!");
         }
         public void RemoveMenuItem()
         {

@@ -12,9 +12,9 @@
             items.Add(item);
 
         }
-        public void RemoveItem()
+        public void RemoveItem(T item)
         {
-
+            items.Remove(item);
         }
         public void FindItem()
         {

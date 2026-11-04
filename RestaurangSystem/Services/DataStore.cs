@@ -2,7 +2,9 @@
 {
     public class DataStore<T> where T : IIdentify
     {
-        List<T> items = new List<T>();
+        private List<T> items = new List<T>();
+        public IReadOnlyList<T> Items => items;   
+        public int Count => items.Count;
 
         public void AddItem(T item)
         {

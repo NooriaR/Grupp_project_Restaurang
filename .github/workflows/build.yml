@@ -1,0 +1,30 @@
+# Save as: .github/workflows/dotnet-check.yml
+name: .NET build and run check
+
+on:
+  pull_request:
+    branches: [ main ]   # only runs for pull requests that target main
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: RestaurangSystem
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x   # change to match your project's TargetFramework
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release

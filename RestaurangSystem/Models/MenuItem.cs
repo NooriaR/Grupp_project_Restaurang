@@ -1,18 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using RestaurangSystem.Services;
 
 namespace RestaurangSystem.Models
 {
-    public class MenuItem
+    public enum Category
+    {
+        Förrätt,
+        Huvudrätt,
+        Efterrätt,
+        Dryck
+    }
+
+    public class MenuItem : IIdentify
     {
         public int Id { get; set; }
-        public string Namn { get; set; }
-        public decimal Pris { get; set; }
-        public string innehåll { get; set; }
-        public bool isVegeterian { get; set; }
-
-        //This needs an enum class called Category to not throw error
-        //Public Category category
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public string Content { get; set; }
+        public bool IsVegetarian { get; set; }
+        public Category Category { get; set; }
     }
 }

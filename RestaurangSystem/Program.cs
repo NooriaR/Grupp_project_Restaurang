@@ -1,9 +1,8 @@
-﻿
-using System;
+﻿using System;
 using RestaurangSystem.Models;
+using RestaurangSystem.Services;
+using RestaurangSystem.UI;
 using Spectre.Console;
-
-﻿using RestaurangSystem.UI;
 
 namespace RestaurangSystem
 {
@@ -11,7 +10,20 @@ namespace RestaurangSystem
     {
         static void Main(string[] args)
         {
-           // MenuHelper.StartMenu(); This is how you call the Start Menu
+            // ===== TILLFÄLLIGT TEST (ta bort efteråt) =====
+            DataStore<MenuItem> store = new DataStore<MenuItem>();
+            MenuItem item = new MenuItem();
+
+            Console.WriteLine(store.items.Count); 
+            store.AddItem(item);
+            Console.WriteLine(store.items.Count); 
+
+
+            Console.WriteLine(item.Id); // ska skriva 1
+
+            // ===== SLUT PÅ TEST =====
+
+            // MenuHelper.StartMenu(); This is how you call the Start Menu
             // Skapar ett objekt av RestaurantMenu
             RestaurantMenu menu = new RestaurantMenu();
 
@@ -47,11 +59,9 @@ namespace RestaurangSystem
                 }
             }
             MenuHelper.ShowOrderMenu();
-
-            //AddChoices("Create new order", "Add item to order", "Show orders", "Back"));
-            //case "Beställningar":
-            //ShowOrderMenu();
-            //break;
         }
     }
+
+    // Tillfällig testklass (ta bort efteråt)
+    
 }

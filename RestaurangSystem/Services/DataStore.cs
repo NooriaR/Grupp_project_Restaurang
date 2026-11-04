@@ -1,4 +1,6 @@
-﻿namespace RestaurangSystem.Services
+﻿using Spectre.Console;
+using System.Text.Json;
+namespace RestaurangSystem.Services
 {
     public class DataStore<T> where T : IIdentify
     {

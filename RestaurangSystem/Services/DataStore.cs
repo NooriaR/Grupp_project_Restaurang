@@ -2,9 +2,6 @@
 {
     public class DataStore<T> where T : IIdentify
     {
-        private List<T> items = new List<T>();
-        public IReadOnlyList<T> Items => items;   
-        public int Count => items.Count;
         public List<T> items = new List<T>();
 
         public void AddItem(T item)
@@ -24,7 +21,7 @@
 
         }
         public void GetItem()
-        {
+        {s
 
         }
         public void SaveToJson()

@@ -1,4 +1,6 @@
-﻿namespace RestaurangSystem.Models
+﻿using RestaurangSystem.Services;
+
+namespace RestaurangSystem.Models
 {
     public enum Category
     {
@@ -8,7 +10,7 @@
         Dryck
     }
 
-    public class MenuItem
+    public class MenuItem : IIdentify
     {
         public int Id { get; set; }
         public string Namn { get; set; }

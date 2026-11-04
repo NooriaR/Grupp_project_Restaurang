@@ -3,6 +3,7 @@ using System;
 using RestaurangSystem.Models;
 using Spectre.Console;
 
+﻿using RestaurangSystem.UI;
 namespace RestaurangSystem
 {
     internal class Program
@@ -43,6 +44,12 @@ namespace RestaurangSystem
                         break;
                 }
             }
+            MenuHelper.ShowOrderMenu();
+
+            //AddChoices("Create new order", "Add item to order", "Show orders", "Back"));
+            //case "Beställningar":
+            //ShowOrderMenu();
+            //break;
         }
     }
 }

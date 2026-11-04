@@ -48,7 +48,6 @@ namespace RestaurangSystem.Models
             }
         }
 
-
         public void ShowOnlyVegetarian()
         {
 

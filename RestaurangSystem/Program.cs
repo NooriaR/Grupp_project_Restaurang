@@ -13,18 +13,9 @@ namespace RestaurangSystem
     {
         static void Main(string[] args)
         {
-            // ===== TILLFÄLLIGT TEST (ta bort efteråt) =====
-            DataStore<MenuItem> store = new DataStore<MenuItem>();
-            MenuItem item = new MenuItem();
-
-            Console.WriteLine(store.items.Count); 
-            store.AddItem(item);
-            Console.WriteLine(store.items.Count); 
 
 
-            Console.WriteLine(item.Id); // ska skriva 1
 
-            // ===== SLUT PÅ TEST =====
              DataStore<MenuItem> dataStore = new DataStore<MenuItem>();
             MenuItem item = new MenuItem { Id = 1, Name = "Pizza", Price = 99.99m };
             dataStore.items.Add(item); // Add the item to the data store

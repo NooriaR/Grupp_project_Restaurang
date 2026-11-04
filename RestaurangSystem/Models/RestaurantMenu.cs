@@ -62,6 +62,7 @@ namespace RestaurangSystem.Models
                 Content = innehall,
                 IsVegetarian = isVegeterian,
                 Category = Enum.Parse<Category>(category) 
+                Category = Enum.Parse<Category>(category)
             };
 
             // Lägger till maträtten i listan

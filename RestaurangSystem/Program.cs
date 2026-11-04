@@ -1,9 +1,11 @@
-﻿
-using System;
+﻿using System;
 using RestaurangSystem.Models;
+using RestaurangSystem.Services;
+using RestaurangSystem.UI;
 using Spectre.Console;
+using RestaurangSystem.Services;   
 
-﻿using RestaurangSystem.UI;
+using RestaurangSystem.UI;
 
 namespace RestaurangSystem
 {
@@ -11,7 +13,17 @@ namespace RestaurangSystem
     {
         static void Main(string[] args)
         {
-           // MenuHelper.StartMenu(); This is how you call the Start Menu
+
+
+
+             DataStore<MenuItem> dataStore = new DataStore<MenuItem>();
+            MenuItem item = new MenuItem { Id = 1, Name = "Pizza", Price = 99.99m };
+            dataStore.items.Add(item); // Add the item to the data store
+            Console.WriteLine($"Items in data store before removal: {dataStore.items.Count}"); // Output: 1
+            dataStore.RemoveItem(item); // Remove the item
+            Console.WriteLine($"Items in data store after removal: {dataStore.items.Count}"); // Output: 0
+
+            // MenuHelper.StartMenu(); This is how you call the Start Menu
             // Skapar ett objekt av RestaurantMenu
             RestaurantMenu menu = new RestaurantMenu();
 
@@ -22,7 +34,8 @@ namespace RestaurangSystem
             {
                 AnsiConsole.WriteLine("\n===== RESTAURANGSYSTEM =====");
                 AnsiConsole.WriteLine("1. Lägg till maträtt");
-                AnsiConsole.WriteLine("2. Avsluta");
+                AnsiConsole.WriteLine("2. Ta bort maträtt");
+                AnsiConsole.WriteLine("3. Avsluta");
 
                 AnsiConsole.Write("Välj alternativ: ");
                 string choice = Console.ReadLine();
@@ -36,6 +49,11 @@ namespace RestaurangSystem
                         break;
 
                     case "2":
+                        // Anropar metoden i RestaurantMenu.cs
+                        menu.RemoveMenuItem();
+                        break;  
+
+                    case "3":
                         // Avslutar programmet
                         running = false;
                         Console.WriteLine("Programmet avslutas.");
@@ -47,11 +65,9 @@ namespace RestaurangSystem
                 }
             }
             MenuHelper.ShowOrderMenu();
-
-            //AddChoices("Create new order", "Add item to order", "Show orders", "Back"));
-            //case "Beställningar":
-            //ShowOrderMenu();
-            //break;
         }
     }
+
+    // Tillfällig testklass (ta bort efteråt)
+    
 }

@@ -5,16 +5,19 @@
         private List<T> items = new List<T>();
         public IReadOnlyList<T> Items => items;   
         public int Count => items.Count;
+        public List<T> items = new List<T>();
 
         public void AddItem(T item)
         {
             //sets a new id for every item added in a list, so no item has the same id
             item.Id = items.Select(i => i.Id).DefaultIfEmpty(0).Max() + 1;
+            //add the item to the list
+            items.Add(item);
 
         }
-        public void RemoveItem()
+        public void RemoveItem(T item)
         {
-
+            items.Remove(item);
         }
         public void FindItem()
         {

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Spectre.Console;
-﻿using Spectre.Console;
+
 
 namespace RestaurangSystem.Models
 {
@@ -61,7 +61,7 @@ namespace RestaurangSystem.Models
                 Price = pris,
                 Content = innehall,
                 IsVegetarian = isVegeterian,
-                Category = Enum.Parse<Category>(category)
+                Category = Enum.Parse<Category>(category), 
             };
 
             // Lägger till maträtten i listan

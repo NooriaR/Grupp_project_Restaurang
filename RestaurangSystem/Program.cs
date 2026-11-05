@@ -36,7 +36,7 @@ namespace RestaurangSystem
 
                     case "2":
                         // Anropar metoden i RestaurantMenu.cs
-                        menu.RemoveMenuItem();
+                   menu.RemoveMenuItem(dataStore);
                         break;
 
                     case "3":

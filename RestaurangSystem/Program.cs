@@ -9,18 +9,6 @@ namespace RestaurangSystem
     {
         static void Main(string[] args)
         {
-
-
-
-             DataStore<MenuItem> dataStore = new DataStore<MenuItem>();
-            MenuItem item = new MenuItem { Id = 1, Name = "Pizza", Price = 99.99m };
-            dataStore.items.Add(item); // Add the item to the data store
-            Console.WriteLine($"Items in data store before removal: {dataStore.items.Count}"); // Output: 1
-            dataStore.RemoveItem(item); // Remove the item
-            Console.WriteLine($"Items in data store after removal: {dataStore.items.Count}"); // Output: 0
-
-            // MenuHelper.StartMenu(); This is how you call the Start Menu
-            // Skapar ett objekt av RestaurantMenu
             RestaurantMenu menu = new RestaurantMenu();
 
             bool running = true;
@@ -62,8 +50,5 @@ namespace RestaurangSystem
             }
             MenuHelper.ShowOrderMenu();
         }
-    }
-
-    // Tillfällig testklass (ta bort efteråt)
-    
+    }    
 }

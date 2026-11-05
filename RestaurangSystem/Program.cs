@@ -10,28 +10,23 @@ namespace RestaurangSystem
         static void Main(string[] args)
         {
 
-
-
-             DataStore<MenuItem> dataStore = new DataStore<MenuItem>();
-            MenuItem item = new MenuItem { Id = 1, Name = "Pizza", Price = 99.99m };
-            dataStore.items.Add(item); // Add the item to the data store
-            Console.WriteLine($"Items in data store before removal: {dataStore.items.Count}"); // Output: 1
-            dataStore.RemoveItem(item); // Remove the item
-            Console.WriteLine($"Items in data store after removal: {dataStore.items.Count}"); // Output: 0
-
             // MenuHelper.StartMenu(); This is how you call the Start Menu
             // Skapar ett objekt av RestaurantMenu
             RestaurantMenu menu = new RestaurantMenu();
+            DataStore<MenuItem> dataStore = new DataStore<MenuItem>();
 
             bool running = true;
 
             // Programmets huvudmeny
             while (running)
             {
+                dataStore.AddItem(new MenuItem { Name = "Pizza", Price = 99.99m });
+
                 AnsiConsole.WriteLine("\n===== RESTAURANGSYSTEM =====");
                 AnsiConsole.WriteLine("1. Lägg till maträtt");
                 AnsiConsole.WriteLine("2. Ta bort maträtt");
-                AnsiConsole.WriteLine("3. Avsluta");
+                AnsiConsole.WriteLine("3. Uppdatera maträtt");
+                AnsiConsole.WriteLine("4. Avsluta");
 
                 AnsiConsole.Write("Välj alternativ: ");
                 string choice = Console.ReadLine();
@@ -47,9 +42,14 @@ namespace RestaurangSystem
                     case "2":
                         // Anropar metoden i RestaurantMenu.cs
                         menu.RemoveMenuItem();
-                        break;  
+                        break;
 
                     case "3":
+                        // Anropar metoden i RestaurantMenu.cs
+                        menu.UppdateMenuItem(dataStore);
+                        break;
+
+                    case "4":
                         // Avslutar programmet
                         running = false;
                         Console.WriteLine("Programmet avslutas.");
@@ -65,5 +65,4 @@ namespace RestaurangSystem
     }
 
     // Tillfällig testklass (ta bort efteråt)
-    
 }

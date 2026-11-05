@@ -50,6 +50,6 @@ public void RemoveFromOrder(int id)
     // Beräknar det totala priset för beställningen.
     public decimal CalculateSumPrice()
     {
-        return Items.Sum(item => item.Pris);
+        return Items.Sum(item => item.Price);
     }
 }

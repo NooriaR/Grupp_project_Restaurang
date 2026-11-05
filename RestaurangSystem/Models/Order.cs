@@ -9,19 +9,11 @@ namespace RestaurangSystem.Models
     public class Order : IIdentify
     {
         //Attributes
-
         public int Id { get; set; }
         public List<MenuItem> OrdereredItems = new List<MenuItem>();
         public List<Guest> Guests = new List<Guest>();
-        OrderStatus Status;
         public DateTime OrderTime;
 
-        //Methods
-        public void AddToOrder()
-        {
-
-        }
-     
         
         public void RemoveFromOrder(int id)
         {
@@ -34,12 +26,4 @@ namespace RestaurangSystem.Models
 
         }
     }
-
-    enum OrderStatus
-    {
-        Pending,
-        InProgress,
-        Completed,
-        Cancelled
-    }   
 }

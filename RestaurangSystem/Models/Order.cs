@@ -1,8 +1,8 @@
-
+using RestaurangSystem.Services;
 namespace RestaurangSystem.Models;
 
 // Representerar en beställning i restaurangen.
-public class Order
+public class Order : IIdentify
 {
     // Ett unikt nummer för beställningen.
     public int Id { get; set; }
@@ -36,6 +36,16 @@ public class Order
     {
         Items.Remove(item);
     }
+	// Tar bort en maträtt från beställningen med hjälp av dess ID.
+public void RemoveFromOrder(int id)
+{
+    var item = Items.Find(menuitem => menuitem.Id == id);
+
+    if (item != null)
+    {
+        Items.Remove(item);
+    }
+}
 
     // Beräknar det totala priset för beställningen.
     public decimal CalculateSumPrice()

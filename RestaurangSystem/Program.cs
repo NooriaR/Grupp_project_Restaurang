@@ -20,8 +20,6 @@ namespace RestaurangSystem
             // Programmets huvudmeny
             while (running)
             {
-                dataStore.AddItem(new MenuItem { Name = "Pizza", Price = 99.99m });
-
                 AnsiConsole.WriteLine("\n===== RESTAURANGSYSTEM =====");
                 AnsiConsole.WriteLine("1. Lägg till maträtt");
                 AnsiConsole.WriteLine("2. Ta bort maträtt");

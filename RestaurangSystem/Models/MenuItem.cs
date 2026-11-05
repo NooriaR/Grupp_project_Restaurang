@@ -13,6 +13,7 @@ namespace RestaurangSystem.Models
 
     public class MenuItem : IIdentify
     {
+        //Attributes
         public int Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
@@ -20,9 +21,7 @@ namespace RestaurangSystem.Models
         public bool IsVegetarian { get; set; }
         public Category Category { get; set; }
 
-        //methods 
-
-
+        //Methods 
         public static MenuItem CreateMenuItem()
         {
 

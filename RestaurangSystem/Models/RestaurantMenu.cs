@@ -102,6 +102,30 @@ public void RemoveMenuItem(DataStore<MenuItem> dataStore)
         AnsiConsole.MarkupLine($"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
     }
 }
+public void UppdateMenuItem(DataStore<MenuItem> dataStore)
+{
+    try
+    {
+        int id = AnsiConsole.Ask<int>("Enter the Id of the item to update:");
+
+        MenuItem item = dataStore.FindItem(m => m.Id == id);
+
+        if (item == null)
+        {
+            AnsiConsole.MarkupLine("[red]Item not found.[/]");
+            return;
+        }
+
+        item.Name = AnsiConsole.Ask<string>("New name:");
+        item.Price = AnsiConsole.Ask<decimal>("New price:");
+
+        AnsiConsole.MarkupLine("[green]Item updated![/]");
+    }
+    catch (Exception ex)
+    {
+        AnsiConsole.MarkupLine($"[red]Something went wrong: {ex.Message}[/]");
+    }
+}
         
         public void SortByPrice()
         {

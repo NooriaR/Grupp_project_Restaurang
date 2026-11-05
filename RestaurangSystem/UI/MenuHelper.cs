@@ -115,7 +115,7 @@ namespace RestaurangSystem.UI
 
         public static void ReturnToMainMenu()
         {
-
+            StartMenu();
         }
         public static void StaffMenu()
         {

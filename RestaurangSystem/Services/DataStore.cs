@@ -18,9 +18,18 @@ namespace RestaurangSystem.Services
         {
             items.Remove(item);
         }
-        public void FindItem()
+        // Finds the first item that matches a condition, returns null if nothing is found
+        public T? FindItem(Func<T, bool> predicate)
         {
-
+            try
+            {
+                return items.FirstOrDefault(predicate);
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Fel vid sökning: {ex.Message}[/]");
+                return default;
+            }
         }
         public void GetItem()
         {

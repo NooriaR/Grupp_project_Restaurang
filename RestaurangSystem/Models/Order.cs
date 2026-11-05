@@ -1,4 +1,6 @@
+
 using RestaurangSystem.Services;
+
 namespace RestaurangSystem.Models;
 
 // Representerar en beställning i restaurangen.
@@ -8,7 +10,7 @@ public class Order : IIdentify
     public int Id { get; set; }
 
     // Sparar alla maträtter som ingår i beställningen.
-    public List<MenuItem> Items { get; set; } = new List<MenuItem>();
+    public List<MenuItem> OrderedItems { get; set; } = new List<MenuItem>();
 
     // Sparar gäster som hör till beställningen.
     public List<Guest> Guests { get; set; } = new List<Guest>();
@@ -28,28 +30,29 @@ public class Order : IIdentify
     // Lägger till en maträtt i beställningen.
     public void AddToOrder(MenuItem item)
     {
-        Items.Add(item);
+        OrderedItems.Add(item);
     }
 
     // Tar bort en maträtt från beställningen.
     public void RemoveFromOrder(MenuItem item)
     {
-        Items.Remove(item);
+        OrderedItems.Remove(item);
     }
-	// Tar bort en maträtt från beställningen med hjälp av dess ID.
-public void RemoveFromOrder(int id)
-{
-    var item = Items.Find(menuitem => menuitem.Id == id);
 
-    if (item != null)
+    // Tar bort en maträtt från beställningen med hjälp av dess ID.
+    public void RemoveFromOrder(int id)
     {
-        Items.Remove(item);
+        var item = OrderedItems.Find(menuitem => menuitem.Id == id);
+
+        if (item != null)
+        {
+            OrderedItems.Remove(item);
+        }
     }
-}
 
     // Beräknar det totala priset för beställningen.
     public decimal CalculateSumPrice()
     {
-        return Items.Sum(item => item.Price);
+        return OrderedItems.Sum(item => item.Price);
     }
 }

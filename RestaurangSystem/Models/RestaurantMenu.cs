@@ -1,8 +1,9 @@
-﻿using System;
+﻿using RestaurangSystem.Services;
+using Spectre.Console;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using Spectre.Console;
 
 
 namespace RestaurangSystem.Models
@@ -61,7 +62,7 @@ namespace RestaurangSystem.Models
                 Price = pris,
                 Content = innehall,
                 IsVegetarian = isVegeterian,
-                Category = Enum.Parse<Category>(category), 
+                Category = Enum.Parse<Category>(category),
             };
 
             // Lägger till maträtten i listan
@@ -73,6 +74,32 @@ namespace RestaurangSystem.Models
         {
 
         }
+
+        public void UppdateMenuItem(DataStore<MenuItem> dataStore)
+        {
+            try
+            {
+                int id = AnsiConsole.Ask<int>("Enter the Id of the item to update:");
+
+                MenuItem item = dataStore.FindItem(m => m.Id == id);
+
+                if (item == null)
+                {
+                    AnsiConsole.MarkupLine("[red]Item not found.[/]");
+                    return;
+                }
+
+                item.Name = AnsiConsole.Ask<string>("New name:");
+                item.Price = AnsiConsole.Ask<decimal>("New price:");
+
+                AnsiConsole.MarkupLine("[green]Item updated![/]");
+            }
+            catch (Exception ex)
+            {
+                AnsiConsole.MarkupLine($"[red]Something went wrong: {ex.Message}[/]");
+            }
+        }
+        
         public void SortByPrice()
         {
 

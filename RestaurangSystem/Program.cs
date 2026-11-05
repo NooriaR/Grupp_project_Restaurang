@@ -57,5 +57,5 @@ namespace RestaurangSystem
             }
             MenuHelper.ShowOrderMenu();
         }
-    }    
+    }
 }

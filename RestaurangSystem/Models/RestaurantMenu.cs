@@ -1,8 +1,9 @@
-﻿using System;
+﻿using RestaurangSystem.Services;
+using Spectre.Console;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using Spectre.Console;
 
 
 namespace RestaurangSystem.Models
@@ -61,7 +62,7 @@ namespace RestaurangSystem.Models
                 Price = pris,
                 Content = innehall,
                 IsVegetarian = isVegeterian,
-                Category = Enum.Parse<Category>(category), 
+                Category = Enum.Parse<Category>(category),
             };
 
             // Lägger till maträtten i listan
@@ -69,10 +70,63 @@ namespace RestaurangSystem.Models
 
             AnsiConsole.WriteLine($"{namn} har lagts till i menyn!");
         }
-        public void RemoveMenuItem()
-        {
+// Removes a menu item from the data store by its Id
+public void RemoveMenuItem(DataStore<MenuItem> dataStore)
+{
+    try
+    {
+        // Ask the user which item to remove
+        int id = AnsiConsole.Ask<int>("Enter the Id of the item to remove:");
 
+        // Look for the item in the data store
+        MenuItem? item = dataStore.FindItem(m => m.Id == id);
+
+        if (item == null)
+        {
+            AnsiConsole.MarkupLine("[red]Item not found.[/]");
+            return;
         }
+
+        // Ask for confirmation before deleting
+        if (!AnsiConsole.Confirm($"Remove [yellow]{Markup.Escape(item.Name)}[/]?"))
+        {
+            AnsiConsole.MarkupLine("[yellow]Removal cancelled.[/]");
+            return;
+        }
+
+        dataStore.RemoveItem(item);
+        AnsiConsole.MarkupLine("[green]Item removed![/]");
+    }
+    catch (Exception ex)
+    {
+        AnsiConsole.MarkupLine($"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
+    }
+}
+public void UppdateMenuItem(DataStore<MenuItem> dataStore)
+{
+    try
+    {
+        int id = AnsiConsole.Ask<int>("Enter the Id of the item to update:");
+
+        MenuItem item = dataStore.FindItem(m => m.Id == id);
+
+        if (item == null)
+        {
+            AnsiConsole.MarkupLine("[red]Item not found.[/]");
+            return;
+        }
+
+        item.Name = AnsiConsole.Ask<string>("New name:");
+        item.Price = AnsiConsole.Ask<decimal>("New price:");
+
+        AnsiConsole.MarkupLine("[green]Item updated![/]");
+    }
+    catch (Exception ex)
+    {
+        AnsiConsole.MarkupLine($"[red]Something went wrong: {ex.Message}[/]");
+    }
+}
+        
         public void SortByPrice()
         {
 

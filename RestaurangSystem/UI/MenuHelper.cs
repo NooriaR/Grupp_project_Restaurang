@@ -9,12 +9,7 @@ namespace RestaurangSystem.UI
 {
     public static class MenuHelper
     {
-        public enum StartMenuChoice // this enum is used to simplify collecting choice from StartMenu, could set each state as a int for ease of access
-        {
-            Order,
-            LogIn,
-            Exit
-        }
+
         //Methods
         public static StartMenuChoice StartMenu() // this method returns a enum called StartMenuChoice which could be converted to an int for easy acces in switch cases
         {
@@ -135,6 +130,32 @@ namespace RestaurangSystem.UI
         
         public static void StaffMenu()
         {
+            var accent = Color.Blue1;   // change this one line to retheme everything
+
+            AnsiConsole.Clear();
+            AnsiConsole.Write(
+                new Panel("Welcome! Pick an option below.")
+                    .Header($"[{accent.ToMarkup()}]Restauraunt Manager[/]")
+                    .Border(BoxBorder.Rounded)
+                    .BorderColor(accent));
+
+            return AnsiConsole.Prompt(
+                 new SelectionPrompt<StaffMenuChoice>()
+                .Title($"[bold {accent.ToMarkup()}]What would you like to do?[/]")
+                .PageSize(10)
+                .WrapAround()
+                .HighlightStyle(new Style(foreground: accent, decoration: Decoration.Bold))
+                .UseConverter(choice => choice switch
+                {
+                    StaffMenuChoice.AddToMenu => "Add to Menu",
+                    StaffMenuChoice.RemovefromMenu => "Remove from Menu",
+                    StaffMenuChoice.UpdateitemonMenu => "Update item on Menu",
+                    StaffMenuChoice.ManageOrders => "Manage Orders",
+                    StaffMenuChoice.ShowSchedule => "Show Schedule",
+                    StaffMenuChoice.Logout => "Log out",
+                    _ => choice.ToString()
+                })
+                .AddChoices(Enum.GetValues<StaffMenuChoice>()));
 
         }
         public static void GuestMenu()

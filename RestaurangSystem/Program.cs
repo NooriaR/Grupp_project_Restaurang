@@ -22,6 +22,7 @@ namespace RestaurangSystem
             // MenuHelper.StartMenu(); This is how you call the Start Menu
             // Skapar ett objekt av RestaurantMenu
             RestaurantMenu menu = new RestaurantMenu();
+            DataStore<MenuItem> dataStore = new DataStore<MenuItem>();
 
             bool running = true;
 
@@ -31,7 +32,8 @@ namespace RestaurangSystem
                 AnsiConsole.WriteLine("\n===== RESTAURANGSYSTEM =====");
                 AnsiConsole.WriteLine("1. Lägg till maträtt");
                 AnsiConsole.WriteLine("2. Ta bort maträtt");
-                AnsiConsole.WriteLine("3. Avsluta");
+                AnsiConsole.WriteLine("3. Uppdatera maträtt");
+                AnsiConsole.WriteLine("4. Avsluta");
 
                 AnsiConsole.Write("Välj alternativ: ");
                 string choice = Console.ReadLine();
@@ -46,10 +48,15 @@ namespace RestaurangSystem
 
                     case "2":
                         // Anropar metoden i RestaurantMenu.cs
-                        menu.RemoveMenuItem();
-                        break;  
+                   menu.RemoveMenuItem(dataStore);
+                        break;
 
                     case "3":
+                        // Anropar metoden i RestaurantMenu.cs
+                        menu.UppdateMenuItem(dataStore);
+                        break;
+
+                    case "4":
                         // Avslutar programmet
                         running = false;
                         Console.WriteLine("Programmet avslutas.");
@@ -62,8 +69,5 @@ namespace RestaurangSystem
             }
             MenuHelper.ShowOrderMenu();
         }
-    }
-
-    // Tillfällig testklass (ta bort efteråt)
-    
+    }    
 }

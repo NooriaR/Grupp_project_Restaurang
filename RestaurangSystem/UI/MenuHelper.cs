@@ -112,25 +112,30 @@ namespace RestaurangSystem.UI
 
             }
         }
-
-        public static void ReturnToMainMenu()
+           public static void ReturnToMainMenu()
         {
-            StartMenuChoice choice = StartMenu();
+            bool running = true;
 
-            switch (choice)
+            while (running)
             {
-                case StartMenuChoice.Order:
-                    ShowOrderMenu();
-                    break;
+                StartMenuChoice choice = StartMenu();
 
-                case StartMenuChoice.LogIn:
-                    LogInMenu();
-                    break;
+                switch (choice)
+                {
+                    case StartMenuChoice.Order:
+                        ShowOrderMenu();
+                        break;
 
-                case StartMenuChoice.Exit:
-                    Environment.Exit(0);
-                    break;
+                    case StartMenuChoice.LogIn:
+                        LogInMenu();
+                        break;
+
+                    case StartMenuChoice.Exit:
+                        running = false;
+                        break;
+                }
             }
+        
         }
         
         public static void StaffMenu()

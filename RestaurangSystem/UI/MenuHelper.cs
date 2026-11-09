@@ -115,8 +115,24 @@ namespace RestaurangSystem.UI
 
         public static void ReturnToMainMenu()
         {
-            StartMenu();
+            StartMenuChoice choice = StartMenu();
+
+            switch (choice)
+            {
+                case StartMenuChoice.Order:
+                    ShowOrderMenu();
+                    break;
+
+                case StartMenuChoice.LogIn:
+                    LogInMenu();
+                    break;
+
+                case StartMenuChoice.Exit:
+                    Environment.Exit(0);
+                    break;
+            }
         }
+        
         public static void StaffMenu()
         {
 

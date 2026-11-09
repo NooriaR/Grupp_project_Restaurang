@@ -12,7 +12,7 @@ namespace RestaurangSystem
 
 
 
-             DataStore<MenuItem> dataStore = new DataStore<MenuItem>();
+            DataStore<MenuItem> dataStore = new DataStore<MenuItem>();
             MenuItem item = new MenuItem { Id = 1, Name = "Pizza", Price = 99.99m };
             dataStore.items.Add(item); // Add the item to the data store
             Console.WriteLine($"Items in data store before removal: {dataStore.items.Count}"); // Output: 1

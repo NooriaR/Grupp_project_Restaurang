@@ -14,9 +14,9 @@ namespace RestaurangSystem
 
 
             // Testdata för SortByPrice, tas bort sen.
-            dataStore.AddItem(new MenuItem { Name = "Pizza", Price = 120 });
-            dataStore.AddItem(new MenuItem { Name = "Cola", Price = 35 });
-            dataStore.AddItem(new MenuItem { Name = "Pasta", Price = 89 });
+            dataStore.AddItem(new MenuItem { Name = "Pizza Salami", Price = 120, IsVegetarian = false });
+            dataStore.AddItem(new MenuItem { Name = "Pasta Pesto", Price = 89, IsVegetarian = true });
+            dataStore.AddItem(new MenuItem { Name = "Sallad", Price = 75, IsVegetarian = true });
 
             bool running = true;
 
@@ -28,7 +28,8 @@ namespace RestaurangSystem
                 AnsiConsole.WriteLine("2. Ta bort maträtt");
                 AnsiConsole.WriteLine("3. Uppdatera maträtt");
                 AnsiConsole.WriteLine("4. Sortera maträtterna från billigast till dyrast");
-                AnsiConsole.WriteLine("5. Avsluta");
+                AnsiConsole.WriteLine("5. Visa endast vegetariska rätter");
+                AnsiConsole.WriteLine("6. Avsluta");
 
                 AnsiConsole.Write("Välj alternativ: ");
                 string choice = Console.ReadLine();
@@ -55,8 +56,11 @@ namespace RestaurangSystem
                         // Anropar metoden i RestaurantMenu.cs
                         menu.SortByPrice(dataStore);
                         break;
-
                     case "5":
+                        menu.ShowOnlyVegetarian(dataStore);
+                        break;
+
+                    case "6":
                         // Avslutar programmet
                         running = false;
                         Console.WriteLine("Programmet avslutas.");

@@ -165,9 +165,23 @@ namespace RestaurangSystem.Models
         }
 
 
-        public void ShowOnlyVegetarian()
+        public void ShowOnlyVegetarian(DataStore<MenuItem> dataStore)
         {
+            // Välj ut bara de vegetariska rätterna
+            var vegetarian = dataStore.items.Where(m => m.IsVegetarian);
 
+            // Om inga hittades, säg det
+            if (!vegetarian.Any())
+            {
+                AnsiConsole.MarkupLine("[yellow]Inga vegetariska rätter hittades.[/]");
+                return;
+            }
+
+            // Skriv ut en rätt i taget
+            foreach (var item in vegetarian)
+            {
+                AnsiConsole.WriteLine($"{item.Name} - {item.Price} kr");
+            }
         }
         public void ShowByCategory()
         {

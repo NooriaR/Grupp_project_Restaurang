@@ -12,6 +12,12 @@ namespace RestaurangSystem
             RestaurantMenu menu = new RestaurantMenu();
             DataStore<MenuItem> dataStore = new DataStore<MenuItem>();
 
+
+            // Testdata för SortByPrice, tas bort sen.
+            dataStore.AddItem(new MenuItem { Name = "Pizza", Price = 120 });
+            dataStore.AddItem(new MenuItem { Name = "Cola", Price = 35 });
+            dataStore.AddItem(new MenuItem { Name = "Pasta", Price = 89 });
+
             bool running = true;
 
             // Programmets huvudmeny
@@ -21,7 +27,8 @@ namespace RestaurangSystem
                 AnsiConsole.WriteLine("1. Lägg till maträtt");
                 AnsiConsole.WriteLine("2. Ta bort maträtt");
                 AnsiConsole.WriteLine("3. Uppdatera maträtt");
-                AnsiConsole.WriteLine("4. Avsluta");
+                AnsiConsole.WriteLine("4. Sortera maträtterna från billigast till dyrast");
+                AnsiConsole.WriteLine("5. Avsluta");
 
                 AnsiConsole.Write("Välj alternativ: ");
                 string choice = Console.ReadLine();
@@ -45,6 +52,11 @@ namespace RestaurangSystem
                         break;
 
                     case "4":
+                        // Anropar metoden i RestaurantMenu.cs
+                        menu.SortByPrice(dataStore);
+                        break;
+
+                    case "5":
                         // Avslutar programmet
                         running = false;
                         Console.WriteLine("Programmet avslutas.");
@@ -55,7 +67,8 @@ namespace RestaurangSystem
                         break;
                 }
             }
-            MenuHelper.ShowOrderMenu();
+ 
+            menu.SortByPrice(dataStore);
         }
     }    
 }

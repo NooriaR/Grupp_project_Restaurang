@@ -33,12 +33,6 @@ public class Order : IIdentify
         OrderedItems.Add(item);
     }
 
-    // Tar bort en maträtt från beställningen.
-    public void RemoveFromOrder(MenuItem item)
-    {
-        OrderedItems.Remove(item);
-    }
-
     // Tar bort en maträtt från beställningen med hjälp av dess ID.
     public void RemoveFromOrder(int id)
     {

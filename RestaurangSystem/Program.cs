@@ -2,7 +2,7 @@
 using RestaurangSystem.Models;
 using RestaurangSystem.Services;
 using RestaurangSystem.UI;
-using Spectre.Console;
+
 namespace RestaurangSystem
 {
     internal class Program
@@ -78,6 +78,7 @@ namespace RestaurangSystem
             }
  
             menu.SortByPrice(dataStore);
+            MenuHelper.ReturnToMainMenu();
         }
-    }    
+    }
 }

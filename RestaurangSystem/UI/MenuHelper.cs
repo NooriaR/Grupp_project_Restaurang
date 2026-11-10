@@ -9,11 +9,10 @@ namespace RestaurangSystem.UI
 {
     public static class MenuHelper
     {
-
-        //Methods
-        public static StartMenuChoice StartMenu() // this method returns a enum called StartMenuChoice which could be converted to an int for easy acces in switch cases
+        // Methods
+        public static StartMenuChoice StartMenu()
         {
-            var accent = Color.Orange1;   // change this one line to retheme everything
+            var accent = Color.Orange1;
 
             AnsiConsole.Clear();
             AnsiConsole.Write(
@@ -22,8 +21,8 @@ namespace RestaurangSystem.UI
                     .Border(BoxBorder.Rounded)
                     .BorderColor(accent));
 
-                return AnsiConsole.Prompt(
-                     new SelectionPrompt<StartMenuChoice>()
+            return AnsiConsole.Prompt(
+                new SelectionPrompt<StartMenuChoice>()
                     .Title($"[bold {accent.ToMarkup()}]What would you like to do?[/]")
                     .PageSize(10)
                     .WrapAround()
@@ -36,28 +35,25 @@ namespace RestaurangSystem.UI
                         _ => choice.ToString()
                     })
                     .AddChoices(Enum.GetValues<StartMenuChoice>()));
-
         }
+
         public static void ChoiceMenu()
         {
-
         }
+
         public static void ShowMenuItems(DataStore<MenuItem> dataStore)
         {
-            // 1. Check if there is anything to show
             if (dataStore.items.Count == 0)
             {
                 AnsiConsole.MarkupLine("[yellow]The menu is empty.[/]");
                 return;
             }
 
-            // 2. Create the table and its columns
             var table = new Table();
             table.AddColumn("Id");
             table.AddColumn("Name");
             table.AddColumn("Price");
 
-            // 3. Add one row per menu item
             foreach (var item in dataStore.items)
             {
                 table.AddRow(
@@ -66,17 +62,15 @@ namespace RestaurangSystem.UI
                     $"{item.Price:F2} kr");
             }
 
-            // 4. Draw the table
             AnsiConsole.Write(table);
-
         }
+
         public static void LogInMenu()
         {
-
         }
+
         public static void ShowOrderMenu()
         {
-
             bool running = true;
 
             while (running)
@@ -104,17 +98,37 @@ namespace RestaurangSystem.UI
                         running = false;
                         break;
                 }
-
             }
         }
 
         public static void ReturnToMainMenu()
         {
+            bool running = true;
 
+            while (running)
+            {
+                StartMenuChoice choice = StartMenu();
+
+                switch (choice)
+                {
+                    case StartMenuChoice.Order:
+                        ShowOrderMenu();
+                        break;
+
+                    case StartMenuChoice.LogIn:
+                        LogInMenu();
+                        break;
+
+                    case StartMenuChoice.Exit:
+                        running = false;
+                        break;
+                }
+            }
         }
-        public static StaffMenuChoice StaffMenu() // this method returns a enum called StaffMenuChoice which could be converted to an int for easy access in switch cases, and prints the whole menu
+
+        public static StaffMenuChoice StaffMenu()
         {
-            var accent = Color.Blue1;   // change this one line to retheme everything
+            var accent = Color.Blue1;
 
             AnsiConsole.Clear();
             AnsiConsole.Write(
@@ -124,27 +138,27 @@ namespace RestaurangSystem.UI
                     .BorderColor(accent));
 
             return AnsiConsole.Prompt(
-                 new SelectionPrompt<StaffMenuChoice>()
-                .Title($"[bold {accent.ToMarkup()}]What would you like to do?[/]")
-                .PageSize(10)
-                .WrapAround()
-                .HighlightStyle(new Style(foreground: accent, decoration: Decoration.Bold))
-                .UseConverter(choice => choice switch
-                {
-                    StaffMenuChoice.AddToMenu => "Add to Menu",
-                    StaffMenuChoice.RemovefromMenu => "Remove from Menu",
-                    StaffMenuChoice.UpdateitemonMenu => "Update item on Menu",
-                    StaffMenuChoice.ManageOrders => "Manage Orders",
-                    StaffMenuChoice.ShowSchedule => "Show Schedule",
-                    StaffMenuChoice.Logout => "Log out",
-                    _ => choice.ToString()
-                })
-                .AddChoices(Enum.GetValues<StaffMenuChoice>()));
-
+                new SelectionPrompt<StaffMenuChoice>()
+                    .Title($"[bold {accent.ToMarkup()}]What would you like to do?[/]")
+                    .PageSize(10)
+                    .WrapAround()
+                    .HighlightStyle(new Style(foreground: accent, decoration: Decoration.Bold))
+                    .UseConverter(choice => choice switch
+                    {
+                        StaffMenuChoice.AddToMenu => "Add to Menu",
+                        StaffMenuChoice.RemovefromMenu => "Remove from Menu",
+                        StaffMenuChoice.UpdateitemonMenu => "Update item on Menu",
+                        StaffMenuChoice.ManageOrders => "Manage Orders",
+                        StaffMenuChoice.ShowSchedule => "Show Schedule",
+                        StaffMenuChoice.Logout => "Log out",
+                        _ => choice.ToString()
+                    })
+                    .AddChoices(Enum.GetValues<StaffMenuChoice>()));
         }
+
         public static void GuestMenu()
         {
-
         }
     }
 }
+

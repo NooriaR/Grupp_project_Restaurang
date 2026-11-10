@@ -1,32 +1,29 @@
 ﻿using RestaurangSystem.Models;
 using RestaurangSystem.Services;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace RestaurangSystem.UI
 {
     public static class MenuHelper
     {
+        public static Color Accent = Color.Orange1;
+
         // Methods
         public static StartMenuChoice StartMenu()
         {
-            var accent = Color.Orange1;
 
             AnsiConsole.Clear();
             AnsiConsole.Write(
                 new Panel("Welcome! Pick an option below.")
-                    .Header($"[{accent.ToMarkup()}]Restauraunt Manager[/]")
+                    .Header($"[{Accent.ToMarkup()}]Restauraunt Manager[/]")
                     .Border(BoxBorder.Rounded)
-                    .BorderColor(accent));
+                    .BorderColor(Accent));
 
             return AnsiConsole.Prompt(
                 new SelectionPrompt<StartMenuChoice>()
-                    .Title($"[bold {accent.ToMarkup()}]What would you like to do?[/]")
+                    .Title($"[bold {Accent.ToMarkup()}]What would you like to do?[/]")
                     .PageSize(10)
                     .WrapAround()
-                    .HighlightStyle(new Style(foreground: accent, decoration: Decoration.Bold))
+                    .HighlightStyle(new Style(foreground: Accent, decoration: Decoration.Bold))
                     .UseConverter(choice => choice switch
                     {
                         StartMenuChoice.Order => "Order",
@@ -65,10 +62,49 @@ namespace RestaurangSystem.UI
             AnsiConsole.Write(table);
         }
 
-        public static void LogInMenu()
+        public static bool LogInMenu(DataStore<Staff> staffList) // this menu takes an datastore object with staffs and returns true if log in succesful or false if log in unsuccesfull
         {
-        }
+            const int maxAttempts = 3; // a conatant int for how many attempts are allowed
 
+            for (int attempt = 1; attempt <= maxAttempts; attempt++) // this for loop prints the menu each time until attempts reach max attempts
+            {
+                AnsiConsole.Clear();
+
+                AnsiConsole.Write(
+                    new Panel("Please log in to continue")
+                        .Header($"[{Accent.ToMarkup()}]Login[/]")
+                        .Border(BoxBorder.Rounded)
+                        .BorderColor(Accent));
+
+                var email = AnsiConsole.Prompt(
+                    new TextPrompt<string>("[bold]Email[/]:")
+                        .Validate(e => AuthService.IsValidEmail(e) // validates the email and continues if correct, or restart again if failed
+                            ? ValidationResult.Success()
+                            : ValidationResult.Error("[red]Enter a valid email, like name@company.com[/]")));
+
+                var password = AnsiConsole.Prompt(
+                    new TextPrompt<string>("[bold]Password[/]:").Secret()); // hides the password with *
+
+                bool ok = AnsiConsole.Status().Start("Checking...", ctx => // this bool becomes true if login method succeeds
+                {
+                    Thread.Sleep(800);
+                    return AuthService.LogIn(email, password,staffList);
+                });
+
+                if (ok) // this prints a message and returns true.
+                {
+                    AnsiConsole.MarkupLine($"[green]Welcome back {AuthService.currentStaff.Name}![/]");
+                    Thread.Sleep(600);
+                    return true;
+                }
+
+                AnsiConsole.MarkupLine($"[red]Wrong email or password.[/] {maxAttempts - attempt} attempt(s) left.");
+                Thread.Sleep(1200);
+            }
+
+            return false; // returns false if the for loops fails
+        }
+        
         public static void ShowOrderMenu()
         {
             bool running = true;
@@ -116,7 +152,7 @@ namespace RestaurangSystem.UI
                         break;
 
                     case StartMenuChoice.LogIn:
-                        LogInMenu();
+                        //LogInMenu();
                         break;
 
                     case StartMenuChoice.Exit:
@@ -158,6 +194,15 @@ namespace RestaurangSystem.UI
 
         public static void GuestMenu()
         {
+        }
+        public static void ShowError(string message, string title = "Error") // this prints a generic message which takes a string to write what you want, and title is changeble
+        {
+            AnsiConsole.Write(
+                new Panel(new Markup($"[red]{Markup.Escape(message)}[/]"))
+                    .Header($"[bold red]{title}[/]")
+                    .Border(BoxBorder.Rounded)
+                    .BorderColor(Color.Red)
+                    .Padding(1, 0));
         }
     }
 }

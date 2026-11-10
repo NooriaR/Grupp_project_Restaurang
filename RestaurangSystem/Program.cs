@@ -1,15 +1,21 @@
-﻿using System;
-using RestaurangSystem.Models;
+﻿using RestaurangSystem.Models;
 using RestaurangSystem.Services;
 using RestaurangSystem.UI;
+using Spectre.Console;
+using System;
 
 namespace RestaurangSystem
 {
     internal class Program
     {
-        static void Main(string[] args)
+        public static class OrderService
         {
-            MenuHelper.ReturnToMainMenu();
+            static void Main(string[] args)
+            {
+
+                
+               
+            }
         }
     }
 }

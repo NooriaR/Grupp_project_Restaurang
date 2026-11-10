@@ -156,8 +156,60 @@ namespace RestaurangSystem.UI
                     .AddChoices(Enum.GetValues<StaffMenuChoice>()));
         }
 
-        public static void GuestMenu()
+        public static void GuestMenu(DataStore<MenuItem> menuStore)
         {
+            // Controls whether the menu keeps showing
+            bool running = true;
+
+            while (running)
+            {
+                // Clear the screen so the menu is clean each time
+                AnsiConsole.Clear();
+                // Show the menu and store the guest's choice
+                var choice = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("[green]Guest - what would you like to do?[/]")
+                        .AddChoices(
+                            "Show menu",
+                            "Show my reservation",
+                            "Cancel reservation",
+                            "Show order status",
+                            "Back"));
+                // Perform the action the guest picked
+                switch (choice)
+                {
+                    // Show all menu items in a table
+                    case "Show menu":
+                        ShowMenuItems(menuStore);
+                        break;
+
+                    case "Show my reservation":
+                        // Placeholder until the Guest class is ready
+                        Console.WriteLine("ShowReservation() goes here");
+                        break;
+
+                    case "Cancel reservation":
+                        // Placeholder until the Guest class is ready
+                        Console.WriteLine("CancelReservation() goes here");
+                        break;
+
+                    case "Show order status":
+                        // Placeholder until the Guest class is ready
+                        Console.WriteLine("ShowOrderStatus() goes here");
+                        break;
+
+                    case "Back":
+                        // End the loop and return to the previous menu
+                        running = false;
+                        break;
+                }
+                // Wait for a key press so the output can be read before the screen clears
+                if (running)
+                {
+                    AnsiConsole.MarkupLine("\n[grey]Press any key to continue...[/]");
+                    Console.ReadKey(true);
+                }
+            }
         }
     }
 }

@@ -183,9 +183,29 @@ namespace RestaurangSystem.Models
                 AnsiConsole.WriteLine($"{item.Name} - {item.Price} kr");
             }
         }
-        public void ShowByCategory()
+        public void ShowByCategory(DataStore<MenuItem> dataStore)
         {
+            // Låt användaren välja kategori med pilarna
+            var category = AnsiConsole.Prompt(
+                new SelectionPrompt<Category>()
+                    .Title("Välj kategori:")
+                    .AddChoices(Enum.GetValues<Category>()));
 
+            // Välj ut bara rätterna i den kategorin
+            var items = dataStore.items.Where(m => m.Category == category);
+
+            // Om inga hittades, säg det
+            if (!items.Any())
+            {
+                AnsiConsole.MarkupLine("[yellow]Inga rätter hittades i den kategorin.[/]");
+                return;
+            }
+
+            // Skriv ut en rätt i taget
+            foreach (var item in items)
+            {
+                AnsiConsole.WriteLine($"{item.Name} - {item.Price} kr");
+            }
         }
 
     }

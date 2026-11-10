@@ -1,45 +1,52 @@
-﻿using RestaurangSystem.Services;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 
-namespace RestaurangSystem.Models
+using RestaurangSystem.Services;
+
+namespace RestaurangSystem.Models;
+
+// Representerar en beställning i restaurangen.
+public class Order : IIdentify
 {
-    public class Order : IIdentify
+    // Ett unikt nummer för beställningen.
+    public int Id { get; set; }
+
+    // Sparar alla maträtter som ingår i beställningen.
+    public List<MenuItem> OrderedItems { get; set; } = new List<MenuItem>();
+
+    // Sparar gäster som hör till beställningen.
+    public List<Guest> Guests { get; set; } = new List<Guest>();
+
+    // Visar beställningens aktuella status.
+    public OrderStatus Status { get; set; } = OrderStatus.Created;
+
+    // Sparar datum och tid när beställningen skapas.
+    public DateTime OrderTime { get; set; } = DateTime.Now;
+
+    // Uppdaterar beställningens status.
+    public void UpdateStatus(OrderStatus newStatus)
     {
-        //Attributes
+        Status = newStatus;
+    }
 
-        public int Id { get; set; }
-        public List<MenuItem> OrdereredItems = new List<MenuItem>();
-        public List<Guest> Guests = new List<Guest>();
-        OrderStatus Status;
-        public DateTime OrderTime;
+    // Lägger till en maträtt i beställningen.
+    public void AddToOrder(MenuItem item)
+    {
+        OrderedItems.Add(item);
+    }
 
-        //Methods
-        public void AddToOrder()
+    // Tar bort en maträtt från beställningen med hjälp av dess ID.
+    public void RemoveFromOrder(int id)
+    {
+        var item = OrderedItems.Find(menuitem => menuitem.Id == id);
+
+        if (item != null)
         {
-
-        }
-     
-        
-        public void RemoveFromOrder(int id)
-        {
-            var item = OrdereredItems.Find(menuitem => menuitem.Id == id);
-            OrdereredItems.Remove(item);
-        
-        }
-        public void CalculateSumPrice()
-        {
-
+            OrderedItems.Remove(item);
         }
     }
 
-    enum OrderStatus
+    // Beräknar det totala priset för beställningen.
+    public decimal CalculateSumPrice()
     {
-        Pending,
-        InProgress,
-        Completed,
-        Cancelled
-    }   
+        return OrderedItems.Sum(item => item.Price);
+    }
 }

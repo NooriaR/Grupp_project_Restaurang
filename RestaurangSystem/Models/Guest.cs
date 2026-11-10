@@ -18,10 +18,20 @@ namespace RestaurangSystem.Models
         {
 
         }
-        public void ShowOrderStatus()
-        {
+       // Visar status för gästens beställningar.
+public void ShowOrderStatus()
+{
+    if (Orderhistory.Count == 0)
+    {
+        Console.WriteLine("Du har inga beställningar.");
+        return;
+    }
 
-        }
+    foreach (Order order in Orderhistory)
+    {
+        Console.WriteLine($"Beställning {order.Id}: {order.Status}");
+    }
+}
         public void CancelReservation()
         {
 

@@ -1,32 +1,29 @@
 ﻿using RestaurangSystem.Models;
 using RestaurangSystem.Services;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace RestaurangSystem.UI
 {
     public static class MenuHelper
     {
+        public static Color Accent = Color.Orange1;
+
         // Methods
         public static StartMenuChoice StartMenu()
         {
-            var accent = Color.Orange1;
 
             AnsiConsole.Clear();
             AnsiConsole.Write(
                 new Panel("Welcome! Pick an option below.")
-                    .Header($"[{accent.ToMarkup()}]Restauraunt Manager[/]")
+                    .Header($"[{Accent.ToMarkup()}]Restauraunt Manager[/]")
                     .Border(BoxBorder.Rounded)
-                    .BorderColor(accent));
+                    .BorderColor(Accent));
 
             return AnsiConsole.Prompt(
                 new SelectionPrompt<StartMenuChoice>()
-                    .Title($"[bold {accent.ToMarkup()}]What would you like to do?[/]")
+                    .Title($"[bold {Accent.ToMarkup()}]What would you like to do?[/]")
                     .PageSize(10)
                     .WrapAround()
-                    .HighlightStyle(new Style(foreground: accent, decoration: Decoration.Bold))
+                    .HighlightStyle(new Style(foreground: Accent, decoration: Decoration.Bold))
                     .UseConverter(choice => choice switch
                     {
                         StartMenuChoice.Order => "Order",
@@ -65,8 +62,62 @@ namespace RestaurangSystem.UI
             AnsiConsole.Write(table);
         }
 
-        public static void LogInMenu()
+        public static bool LogInMenu(DataStore<Staff> staffList) // den här menyn tar ett datastore-objekt med personal och returnerar true om inloggningen lyckas eller false om den misslyckas
         {
+            const int maxAttempts = 3; // en konstant int för hur många försök som är tillåtna
+
+            for (int attempt = 1; attempt <= maxAttempts; attempt++) // den här for loopen skriver ut menyn varje gång tills försöken når max antal försök
+            {
+                AnsiConsole.Clear();
+
+                AnsiConsole.Write(
+                    new Panel("Please log in to continue")
+                        .Header($"[{Accent.ToMarkup()}]Login[/]")
+                        .Border(BoxBorder.Rounded)
+                        .BorderColor(Accent));
+
+                var email = AnsiConsole.Prompt(
+                    new TextPrompt<string>("[bold]Email[/]:")
+                        .Validate(e => AuthService.IsValidEmail(e) // validerar epostadressen och går vidare om den är rätt, eller frågar igen om den är fel
+                            ? ValidationResult.Success()
+                            : ValidationResult.Error("[red]Enter a valid email, like name@company.com[/]")));
+
+                var password = AnsiConsole.Prompt(
+                    new TextPrompt<string>("[bold]Password[/]:").Secret()); // döljer lösenordet med *
+
+                AnsiConsole.Progress()
+                    .AutoClear(true) // tar bort stapeln när den är klar
+                    .Columns(
+                        new TaskDescriptionColumn(),
+                        new ProgressBarColumn()
+                            .CompletedStyle(new Style(Color.Green))
+                            .FinishedStyle(new Style(Color.Green)),
+                        new PercentageColumn())
+                    .Start(ctx =>
+                    {
+                        var task = ctx.AddTask("Checking...");
+
+                        while (!ctx.IsFinished) // fyller stapeln steg för steg
+                        {
+                            task.Increment(10);
+                            Thread.Sleep(160);
+                        }
+                    });
+
+                bool ok = AuthService.LogIn(email, password, staffList); // kontrollerar inloggningen när stapeln är klar
+
+                if (ok) // om inloggningen lyckades skrivs ett meddelande ut och metoden returnerar true
+                {
+                    AnsiConsole.MarkupLine($"[green]Welcome back {AuthService.currentStaff.Name}![/]");
+                    Thread.Sleep(600);
+                    return true;
+                }
+
+                ShowError($"Wrong email or password. {maxAttempts - attempt} attempt(s) left."); // visas bara när inloggningen misslyckades
+                Thread.Sleep(1200); // paus så att man hinner läsa felet innan skärmen rensas
+            }
+
+            return false; // returnerar false om for loopen misslyckas
         }
 
         public static void ShowOrderMenu()
@@ -116,7 +167,7 @@ namespace RestaurangSystem.UI
                         break;
 
                     case StartMenuChoice.LogIn:
-                        LogInMenu();
+                        //LogInMenu();
                         break;
 
                     case StartMenuChoice.Exit:
@@ -210,6 +261,15 @@ namespace RestaurangSystem.UI
                     Console.ReadKey(true);
                 }
             }
+        }
+        public static void ShowError(string message, string title = "Error") // den här skriver ut ett generellt meddelande som tar en sträng för att skriva vad du vill, och titeln går att ändra
+        {
+            AnsiConsole.Write(
+                new Panel(new Markup($"[red]{Markup.Escape(message)}[/]"))
+                    .Header($"[bold red]{title}[/]")
+                    .Border(BoxBorder.Rounded)
+                    .BorderColor(Color.Red)
+                    .Padding(1, 0));
         }
     }
 }

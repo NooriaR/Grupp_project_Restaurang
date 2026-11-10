@@ -156,9 +156,54 @@ namespace RestaurangSystem.UI
                     .AddChoices(Enum.GetValues<StaffMenuChoice>()));
         }
 
-        public static void GuestMenu()
+public static void GuestMenu(DataStore<MenuItem> menuStore)
+{
+    bool running = true;
+
+    while (running)
+    {
+        AnsiConsole.Clear();
+
+        var choice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[green]Guest - what would you like to do?[/]")
+                .AddChoices(
+                    "Show menu",
+                    "Show my reservation",
+                    "Cancel reservation",
+                    "Show order status",
+                    "Back"));
+
+        switch (choice)
         {
+            case "Show menu":
+                ShowMenuItems(menuStore);
+                break;
+
+            case "Show my reservation":
+                Console.WriteLine("ShowReservation() goes here");
+                break;
+
+            case "Cancel reservation":
+                Console.WriteLine("CancelReservation() goes here");
+                break;
+
+            case "Show order status":
+                Console.WriteLine("ShowOrderStatus() goes here");
+                break;
+
+            case "Back":
+                running = false;
+                break;
         }
+
+        if (running)
+        {
+            AnsiConsole.MarkupLine("\n[grey]Press any key to continue...[/]");
+            Console.ReadKey(true);
+        }
+    }
+}
     }
 }
 

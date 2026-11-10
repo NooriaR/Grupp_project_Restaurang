@@ -62,11 +62,11 @@ namespace RestaurangSystem.UI
             AnsiConsole.Write(table);
         }
 
-        public static bool LogInMenu(DataStore<Staff> staffList) // this menu takes an datastore object with staffs and returns true if log in succesful or false if log in unsuccesfull
+        public static bool LogInMenu(DataStore<Staff> staffList) // den här menyn tar ett datastore-objekt med personal och returnerar true om inloggningen lyckas eller false om den misslyckas
         {
-            const int maxAttempts = 3; // a conatant int for how many attempts are allowed
+            const int maxAttempts = 3; // en konstant int för hur många försök som är tillåtna
 
-            for (int attempt = 1; attempt <= maxAttempts; attempt++) // this for loop prints the menu each time until attempts reach max attempts
+            for (int attempt = 1; attempt <= maxAttempts; attempt++) // den här for loopen skriver ut menyn varje gång tills försöken når max antal försök
             {
                 AnsiConsole.Clear();
 
@@ -78,33 +78,48 @@ namespace RestaurangSystem.UI
 
                 var email = AnsiConsole.Prompt(
                     new TextPrompt<string>("[bold]Email[/]:")
-                        .Validate(e => AuthService.IsValidEmail(e) // validates the email and continues if correct, or restart again if failed
+                        .Validate(e => AuthService.IsValidEmail(e) // validerar epostadressen och går vidare om den är rätt, eller frågar igen om den är fel
                             ? ValidationResult.Success()
                             : ValidationResult.Error("[red]Enter a valid email, like name@company.com[/]")));
 
                 var password = AnsiConsole.Prompt(
-                    new TextPrompt<string>("[bold]Password[/]:").Secret()); // hides the password with *
+                    new TextPrompt<string>("[bold]Password[/]:").Secret()); // döljer lösenordet med *
 
-                bool ok = AnsiConsole.Status().Start("Checking...", ctx => // this bool becomes true if login method succeeds
-                {
-                    Thread.Sleep(800);
-                    return AuthService.LogIn(email, password,staffList);
-                });
+                AnsiConsole.Progress()
+                    .AutoClear(true) // tar bort stapeln när den är klar
+                    .Columns(
+                        new TaskDescriptionColumn(),
+                        new ProgressBarColumn()
+                            .CompletedStyle(new Style(Color.Green))
+                            .FinishedStyle(new Style(Color.Green)),
+                        new PercentageColumn())
+                    .Start(ctx =>
+                    {
+                        var task = ctx.AddTask("Checking...");
 
-                if (ok) // this prints a message and returns true.
+                        while (!ctx.IsFinished) // fyller stapeln steg för steg
+                        {
+                            task.Increment(10);
+                            Thread.Sleep(160);
+                        }
+                    });
+
+                bool ok = AuthService.LogIn(email, password, staffList); // kontrollerar inloggningen när stapeln är klar
+
+                if (ok) // om inloggningen lyckades skrivs ett meddelande ut och metoden returnerar true
                 {
                     AnsiConsole.MarkupLine($"[green]Welcome back {AuthService.currentStaff.Name}![/]");
                     Thread.Sleep(600);
                     return true;
                 }
 
-                AnsiConsole.MarkupLine($"[red]Wrong email or password.[/] {maxAttempts - attempt} attempt(s) left.");
-                Thread.Sleep(1200);
+                ShowError($"Wrong email or password. {maxAttempts - attempt} attempt(s) left."); // visas bara när inloggningen misslyckades
+                Thread.Sleep(1200); // paus så att man hinner läsa felet innan skärmen rensas
             }
 
-            return false; // returns false if the for loops fails
+            return false; // returnerar false om for loopen misslyckas
         }
-        
+
         public static void ShowOrderMenu()
         {
             bool running = true;
@@ -195,7 +210,7 @@ namespace RestaurangSystem.UI
         public static void GuestMenu()
         {
         }
-        public static void ShowError(string message, string title = "Error") // this prints a generic message which takes a string to write what you want, and title is changeble
+        public static void ShowError(string message, string title = "Error") // den här skriver ut ett generellt meddelande som tar en sträng för att skriva vad du vill, och titeln går att ändra
         {
             AnsiConsole.Write(
                 new Panel(new Markup($"[red]{Markup.Escape(message)}[/]"))

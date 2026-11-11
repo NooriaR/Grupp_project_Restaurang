@@ -1,3 +1,6 @@
+﻿using Spectre.Console;
+using System.Text.Json.Serialization;
+
 ﻿using RestaurangSystem.Services;
 using Spectre.Console;
 namespace RestaurangSystem.Models
@@ -9,8 +12,7 @@ namespace RestaurangSystem.Models
         // Lagrar personalens lösenord.
         public string Password { get; set; }
 
-        // Anger om personalen är inloggad eller inte.
-        // true = inloggad, false = inte inloggad.
+        [JsonIgnore]
         public bool IsLoggedIn { get; set; }
 
         // Kopplar ett arbetsschema till den anställda.

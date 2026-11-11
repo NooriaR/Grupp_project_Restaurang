@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Spectre.Console;
 using System.Text.Json.Serialization;
 
 namespace RestaurangSystem.Models
@@ -14,7 +12,12 @@ namespace RestaurangSystem.Models
 
         [JsonIgnore]
         public bool IsLoggedIn { get; set; }
-        //Methods
+
+        // Kopplar ett arbetsschema till den anställda.
+        // Varje anställd får ett eget tomt arbetsschema.
+        public WorkSchedule Schedule { get; set; } = new WorkSchedule();
+
+        //Metoder
         public void WorkingSchedule()
         {
             // Kontrollerar om personalen är inloggad.

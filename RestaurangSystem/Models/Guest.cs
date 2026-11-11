@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Spectre.Console;
 
 namespace RestaurangSystem.Models
 {
@@ -25,15 +26,15 @@ namespace RestaurangSystem.Models
             // Kontrollerar om gästen har en reservation.
             if (reservation == null)
             {
-                Console.WriteLine("Du har ingen reservation.");
+                AnsiConsole.MarkupLine("[red]Du har ingen reservation.[/]");
                 return;
             }
 
             // Visar datum och tid för reservationen.
-            Console.WriteLine($"Reservationstid: {reservation.time}");
+            AnsiConsole.WriteLine($"Reservationstid: {reservation.time}");
 
             // Visar hur många gäster reservationen gäller.
-            Console.WriteLine($"Antal gäster: {reservation.GuestAmount}");
+            AnsiConsole.WriteLine($"Antal gäster: {reservation.GuestAmount}");
         }
 
         // Visar status för gästens alla beställningar.
@@ -43,7 +44,8 @@ namespace RestaurangSystem.Models
             if (Orderhistory.Count == 0)
             {
                 // Skriver ut ett meddelande om gästen saknar beställningar.
-                Console.WriteLine("Du har inga beställningar.");
+                AnsiConsole.MarkupLine("[yellow]Du har inga beställningar.[/]");
+
 
                 // Avslutar metoden direkt eftersom det inte finns något mer att visa.
                 return;
@@ -53,7 +55,7 @@ namespace RestaurangSystem.Models
             foreach (Order order in Orderhistory)
             {
                 // Skriver ut varje beställnings ID och dess aktuella status.
-                Console.WriteLine($"Beställning {order.Id}: {order.Status}");
+                AnsiConsole.WriteLine($"Beställning {order.Id}: {order.Status}");
             }
         }
 
@@ -63,7 +65,7 @@ namespace RestaurangSystem.Models
             // Kontrollerar om gästen har en reservation.
             if (reservation == null)
             {
-                Console.WriteLine("Du har ingen reservation att avboka.");
+                AnsiConsole.MarkupLine("[red]Du har ingen reservation att avboka.[/]");
                 return;
             }
 
@@ -71,7 +73,7 @@ namespace RestaurangSystem.Models
             reservation = null;
 
             // Bekräftar att reservationen har avbokats.
-            Console.WriteLine("Din reservation har avbokats.");
+            AnsiConsole.MarkupLine("[green]Din reservation har avbokats.[/]");
         }
     }
 }

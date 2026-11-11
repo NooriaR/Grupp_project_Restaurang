@@ -19,15 +19,9 @@ namespace RestaurangSystem.Models
        
         public void Register()
         {
-            string file = "staff.json";   // filen där alla staff sparas
-
-            // STEG 1: Ladda de som redan är sparade (om filen finns)
-            var staffList = new List<Staff>();
-            if (File.Exists(file))
-            {
-                string json = File.ReadAllText(file);
-                staffList = JsonSerializer.Deserialize<List<Staff>>(json) ?? new List<Staff>();
-            }
+            // STEG 1: Skapa en DataStore för Staff och ladda det som redan är sparat
+            var stafflist = new DataStore<Staff>();
+            stafflist.LoadFromJson();
 
             // STEG 2: Fråga efter uppgifter
             var name = AnsiConsole.Ask<string>("Enter your [green]name[/]:");
@@ -39,7 +33,7 @@ namespace RestaurangSystem.Models
                         : ValidationResult.Error("[red]Email must contain @ and a dot[/]")));
 
             // STEG 3: Kolla om e-posten redan används
-            if (staffList.Any(s => s.Email == email))
+            if (stafflist.FindItem(s => s.Email == email) != null)
             {
                 AnsiConsole.MarkupLine("[red]This email is already registered.[/]");
                 return;   // avsluta metoden här
@@ -50,21 +44,10 @@ namespace RestaurangSystem.Models
 
             // STEG 4: Skapa Staff-objektet och lägg till i listan
             var staff = new Staff { Name = name, Email = email, Password = password };
-            staffList.Add(staff);
+            stafflist.AddItem(staff);
 
             // STEG 5: Spara hela listan till JSON-filen
-            try
-            {
-                string newJson = JsonSerializer.Serialize(staffList,
-                    new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(file, newJson);
-
-                AnsiConsole.MarkupLine($"[green]Welcome, {name}! You are now registered.[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Could not save: {ex.Message}[/]");
-            }
+            stafflist.SaveToJson();
         }
         public void WorkingSchedule()
         {

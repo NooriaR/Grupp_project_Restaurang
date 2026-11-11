@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using RestaurangSystem.Models;
 using RestaurangSystem.Services;
 using RestaurangSystem.UI;
@@ -9,6 +10,7 @@ namespace RestaurangSystem
     {
         static void Main(string[] args)
         {
+            MenuHelper.ReturnToMainMenu();
         }
     }
 }

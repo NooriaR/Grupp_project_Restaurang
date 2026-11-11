@@ -1,33 +1,27 @@
 ﻿using RestaurangSystem.Services;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-
 namespace RestaurangSystem.Models
 {
     public class Staff : Users
     {
-        //Attributes
-        public string Name { get; set; }
-        public string Email { get; set; }
+        // Egenskaper (Attributes)
+
+        // Lagrar personalens lösenord.
         public string Password { get; set; }
+
+        // Anger om personalen är inloggad eller inte.
+        // true = inloggad, false = inte inloggad.
         public bool IsLoggedIn { get; set; }
 
+        // Kopplar ett arbetsschema till den anställda.
+        // Varje anställd får ett eget tomt arbetsschema.
+        public WorkSchedule Schedule { get; set; } = new WorkSchedule();
 
-        //methods
         public void Register()
         {
-            string file = "staff.json";   // filen där alla staff sparas
-
-            // STEG 1: Ladda de som redan är sparade (om filen finns)
-            var staffList = new List<Staff>();
-            if (File.Exists(file))
-            {
-                string json = File.ReadAllText(file);
-                staffList = JsonSerializer.Deserialize<List<Staff>>(json) ?? new List<Staff>();
-            }
+            // STEG 1: Skapa en DataStore för Staff och ladda det som redan är sparat
+            var stafflist = new DataStore<Staff>();
+            stafflist.LoadFromJson();
 
             // STEG 2: Fråga efter uppgifter
             var name = AnsiConsole.Ask<string>("Enter your [green]name[/]:");
@@ -39,7 +33,7 @@ namespace RestaurangSystem.Models
                         : ValidationResult.Error("[red]Email must contain @ and a dot[/]")));
 
             // STEG 3: Kolla om e-posten redan används
-            if (staffList.Any(s => s.Email == email))
+            if (stafflist.FindItem(s => s.Email == email) != null)
             {
                 AnsiConsole.MarkupLine("[red]This email is already registered.[/]");
                 return;   // avsluta metoden här
@@ -50,24 +44,48 @@ namespace RestaurangSystem.Models
 
             // STEG 4: Skapa Staff-objektet och lägg till i listan
             var staff = new Staff { Name = name, Email = email, Password = password };
-            staffList.Add(staff);
+            stafflist.AddItem(staff);
 
             // STEG 5: Spara hela listan till JSON-filen
-            try
-            {
-                string newJson = JsonSerializer.Serialize(staffList,
-                    new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(file, newJson);
-
-                AnsiConsole.MarkupLine($"[green]Welcome, {name}! You are now registered.[/]");
-            }
-            catch (Exception ex)
-            {
-                AnsiConsole.MarkupLine($"[red]Could not save: {ex.Message}[/]");
-            }
+            stafflist.SaveToJson();
         }
+        // Visar personalens arbetsschema.
         public void WorkingSchedule()
         {
+            // Kontrollerar om personalen är inloggad.
+            if (!IsLoggedIn)
+            {
+                AnsiConsole.MarkupLine("[red]Du måste vara inloggad för att se arbetsschemat.[/]");
+                return;
+            }
+
+            // Kontrollerar om det finns några arbetspass.
+            if (Schedule.WorkDays.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[yellow]Inget arbetsschema finns tillgängligt.[/]");
+                return;
+            }
+
+            // Skapar en tabell för arbetsschemat.
+            var table = new Table();
+
+            // Lägger till rubriker i tabellen.
+            table.AddColumn("Dag");
+            table.AddColumn("Arbetstid");
+
+            // Går igenom alla arbetspass i schemat.
+            foreach (string day in Schedule.WorkDays)
+            {
+                // Delar upp veckodag och arbetstid.
+                string[] scheduleInfo = day.Split(' ', 2);
+
+                // Lägger till arbetspasset i tabellen.
+                table.AddRow(scheduleInfo[0], scheduleInfo[1]);
+            }
+
+            // Visar arbetsschemat i terminalen.
+            AnsiConsole.Write(table);
         }
+
     }
 }

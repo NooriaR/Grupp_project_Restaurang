@@ -114,7 +114,21 @@ namespace RestaurangSystem.UI
                 }
 
                 ShowError($"Wrong email or password. {maxAttempts - attempt} attempt(s) left."); // visas bara när inloggningen misslyckades
-                Thread.Sleep(1200); // paus så att man hinner läsa felet innan skärmen rensas
+                var next = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("What do you want to do?")
+                        .HighlightStyle(new Style(foreground: Accent, decoration: Decoration.Bold))
+                        .AddChoices("Try again", "Reset password", "Exit"));
+
+                if (next == "Reset password")
+                {
+                    ResetPasswordMenu(staffList);
+                    attempt--; // återställningen ska inte räknas som ett misslyckat försök
+                }
+                else if (next == "Exit")
+                {
+                    return false;
+                }
             }
 
             return false; // returnerar false om for loopen misslyckas
@@ -262,6 +276,65 @@ namespace RestaurangSystem.UI
                 }
             }
         }
+        public static void ResetPasswordMenu(DataStore<Staff> staffList)
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.Write(
+                new Panel("Enter your email to reset your password")
+                    .Header($"[{Accent.ToMarkup()}]Reset password[/]")
+                    .Border(BoxBorder.Rounded)
+                    .BorderColor(Accent));
+
+            var email = AnsiConsole.Prompt(
+                new TextPrompt<string>("[bold]Email[/]:")
+                    .Validate(e => AuthService.IsValidEmail(e)
+                        ? ValidationResult.Success()
+                        : ValidationResult.Error("Enter a valid email")));
+
+            if (!AuthService.StartReset(email, staffList, out var code))
+            {
+                ShowError("No account with that email.");
+                Thread.Sleep(1500);
+                return;
+            }
+
+            // Ingen riktig e-post skickas, så koden visas här istället
+            AnsiConsole.Write(
+                new Panel($"Your reset code is [bold]{code}[/]")
+                    .Header("Simulated email")
+                    .Border(BoxBorder.Rounded)
+                    .BorderColor(Color.Grey));
+
+            var enteredCode = AnsiConsole.Prompt(new TextPrompt<string>("[bold]Reset code[/]:"));
+
+            var newPassword = AnsiConsole.Prompt(
+                new TextPrompt<string>("[bold]New password[/]:")
+                    .Secret()
+                    .Validate(p => p.Length >= 6
+                        ? ValidationResult.Success()
+                        : ValidationResult.Error("At least 6 characters")));
+
+            AnsiConsole.Prompt(
+                new TextPrompt<string>("[bold]Confirm password[/]:")
+                    .Secret()
+                    .Validate(p => p == newPassword
+                        ? ValidationResult.Success()
+                        : ValidationResult.Error(("Passwords don't match"))));
+
+            if (AuthService.CompleteReset(enteredCode, newPassword, staffList))
+            {
+               // Logger.Info($"Password reset for {email}");
+                AnsiConsole.MarkupLine("[green]Password updated. You can log in now.[/]");
+            }
+            else
+            {
+                //Logger.Warning($"Failed password reset for {email}");
+                ShowError("Wrong reset code.");
+            }
+
+            Thread.Sleep(1500);
+        }
+
         public static void ShowError(string message, string title = "Error") // den här skriver ut ett generellt meddelande som tar en sträng för att skriva vad du vill, och titeln går att ändra
         {
             AnsiConsole.Write(

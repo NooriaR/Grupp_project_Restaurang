@@ -6,7 +6,36 @@ namespace RestaurangSystem.Services
     {
         // Attributer
         public static Staff currentStaff { get; set; }
+
+        private static Staff? resetStaff { get; set; }  // personalen som håller på att återställa sitt lösenord
+        private static string? resetCode { get; set; }  // den tillfälliga koden
+
+
         // Metoder
+
+        public static bool StartReset(string email, DataStore<Staff> staffList, out string code) // letar upp personalen och skapar en engångskod
+        {
+            code = "";
+            resetStaff = staffList.FindItem(s => s.Email.Equals(email.Trim(), StringComparison.OrdinalIgnoreCase));
+
+            if (resetStaff == null) return false;
+
+            resetCode = Random.Shared.Next(100000, 1000000).ToString(); // sexsiffrig kod
+            code = resetCode;
+            return true;
+        }
+
+        public static bool CompleteReset(string code, string newPassword, DataStore<Staff> staffList) // byter lösenordet om koden stämmer
+        {
+            if (resetStaff == null || code != resetCode) return false;
+
+            resetStaff.Password = newPassword;
+            staffList.SaveToJson(); // sparar till JSON-filen
+
+            resetStaff = null;
+            resetCode = null; // koden kan inte användas två gånger
+            return true;
+        }
 
         public static bool IsValidEmail(string email) // den här metoden kontrollerar om epostadressen följer rätt struktur
         {

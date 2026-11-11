@@ -1,8 +1,4 @@
-﻿
-using System;
-using RestaurangSystem.Models;
-using RestaurangSystem.Services;
-using RestaurangSystem.UI;
+﻿using Spectre.Console;
 
 namespace RestaurangSystem
 {
@@ -12,5 +8,8 @@ namespace RestaurangSystem
         {
 
         }
+          
     }
+
 }
+

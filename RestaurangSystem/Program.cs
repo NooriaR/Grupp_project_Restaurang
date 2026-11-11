@@ -10,7 +10,7 @@ namespace RestaurangSystem
     {
         static void Main(string[] args)
         {
-          
+
         }
     }
 }

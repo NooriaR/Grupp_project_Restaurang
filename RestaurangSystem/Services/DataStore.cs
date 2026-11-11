@@ -31,9 +31,12 @@ namespace RestaurangSystem.Services
                 return default;
             }
         }
-        public void GetItem()
+        public void GetIds()
         {
-
+            foreach(var item in items)
+            {
+                AnsiConsole.MarkupLine($"[green]Item: {item.GetType().Name} Id: {item.Id}[/]");
+            }
         }
         public void SaveToJson()
         {

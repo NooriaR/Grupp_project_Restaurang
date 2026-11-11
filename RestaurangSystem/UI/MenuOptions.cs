@@ -6,8 +6,8 @@ namespace RestaurangSystem.UI
 {
     public enum StartMenuChoice // this enum is used to simplify collecting choice from StartMenu, could set each state as a int for ease of access
     {
-        Order,
-        LogIn,
+        GuestView,
+        StaffView,
         Exit
     }
 
@@ -20,5 +20,12 @@ namespace RestaurangSystem.UI
         ShowSchedule,
         Logout,
         Exit
+    }
+    public enum GuestMenuChoice // this enum is used to simplify collecting choice from GuestMenu, could set each state as a int for ease of access
+    {
+        CreateOrder,
+        ShowMenu,
+        ShowOrderStatus,
+        Back
     }
 }

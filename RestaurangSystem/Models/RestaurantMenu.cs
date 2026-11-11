@@ -1,4 +1,5 @@
 ﻿using RestaurangSystem.Services;
+using RestaurangSystem.UI;
 using Spectre.Console;
 
 
@@ -9,79 +10,53 @@ namespace RestaurangSystem.Models
         //Attributes
         public List<MenuItem> MenuItems = new List<MenuItem>();
         //Methods
-        public void AddMenuItem()
+        public void AddMenuItem(DataStore<MenuItem> dataStore)
         {
-            // Hämtar maträttens namn
-            AnsiConsole.Write("Ange maträttens namn: ");
-            string namn = Console.ReadLine();
-
-            // Hämtar priset och kontrollerar att det är giltigt
-            AnsiConsole.Write("Ange pris: ");
-            if (!decimal.TryParse(Console.ReadLine(), out decimal pris) || pris < 0)
-            {
-                AnsiConsole.WriteLine("Ogiltigt pris!");
-                return;
-            }
-
-            // Hämtar maträttens innehåll
-            AnsiConsole.Write("Ange innehåll: ");
-            string innehall = Console.ReadLine();
-
-            // Frågar om maträtten är vegetarisk
-            AnsiConsole.Write("Är maträtten vegetarisk? (ja/nej): ");
-            string svar = Console.ReadLine().ToLower();
-
-            bool isVegeterian;
-
-            if (svar == "ja")
-            {
-                isVegeterian = true;
-            }
-            else if (svar == "nej")
-            {
-                isVegeterian = false;
-            }
-            else
-            {
-                Console.WriteLine("Svara ja eller nej!");
-                return;
-            }
-
-            // Hämtar maträttens kategori
-            AnsiConsole.Write("Ange kategori: ");
-            string category = Console.ReadLine();
-
+            
             // Skapar ett nytt maträttsobjekt
-            MenuItem newItem = new MenuItem
-            {
-                Name = namn,
-                Price = pris,
-                Content = innehall,
-                IsVegetarian = isVegeterian,
-                Category = Enum.Parse<Category>(category),
-            };
+            MenuItem newItem = MenuItem.CreateMenuItem();
+
 
             // Lägger till maträtten i listan
-            MenuItems.Add(newItem);
+            dataStore.AddItem(newItem);
 
-            AnsiConsole.WriteLine($"{namn} har lagts till i menyn!");
+            AnsiConsole.WriteLine($"{newItem.Name} har lagts till i menyn!");
         }
         // Removes a menu item from the data store by its Id
         public void RemoveMenuItem(DataStore<MenuItem> dataStore)
         {
             try
             {
-                // Ask the user which item to remove
-                int id = AnsiConsole.Ask<int>("Enter the Id of the item to remove:");
+                dataStore.GetIds(); // Show the list of items with their Ids
+                                    // Ask the user which item to remove
+                                    // STEP 1: Let the user choose how to search (arrow keys + Enter)
+                var searchBy = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("How do you want to find the item?")
+                        .AddChoices("Id", "Name"));
 
-                // Look for the item in the data store
-                MenuItem? item = dataStore.FindItem(m => m.Id == id);
+                MenuItem? item;   // "?" means it can be empty (null) if nothing is found
 
+                // STEP 2: Ask for the id or the name, depending on the choice
+                if (searchBy == "Id")
+                {
+                    int id = AnsiConsole.Ask<int>("Enter the [green]id[/]:");
+                    item = dataStore.FindItem(m => m.Id == id);
+                }
+                else
+                {
+                    string name = AnsiConsole.Ask<string>("Enter the [green]name[/]:");
+                    // OrdinalIgnoreCase means "pizza" and "Pizza" count as the same
+                    item = dataStore.FindItem(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                }
+
+                // STEP 3: Stop if nothing was found
                 if (item == null)
                 {
-                    AnsiConsole.MarkupLine("[red]Item not found.[/]");
+                    AnsiConsole.MarkupLine("[red]No item found.[/]");
                     return;
                 }
+        
 
                 // Ask for confirmation before deleting
                 if (!AnsiConsole.Confirm($"Remove [yellow]{Markup.Escape(item.Name)}[/]?"))
@@ -102,13 +77,28 @@ namespace RestaurangSystem.Models
         {
             try
             {
-                int id = AnsiConsole.Ask<int>("Enter the Id of the item to update:");
+                var searchBy = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("How do you want to find the item?")
+                    .AddChoices("Id", "Name"));
 
-                MenuItem item = dataStore.FindItem(m => m.Id == id);
+                MenuItem? item;   // "?" means it can be empty (null) if nothing is found
+                if (searchBy == "Id")
+                {
+                    int id = AnsiConsole.Ask<int>("Enter the [green]id[/]:");
+                    item = dataStore.FindItem(m => m.Id == id);
+                }
+                else
+                {
+                    string name = AnsiConsole.Ask<string>("Enter the [green]name[/]:");
+                    // OrdinalIgnoreCase means "pizza" and "Pizza" count as the same
+                    item = dataStore.FindItem(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                }
 
+                // STEP 3: Stop if nothing was found
                 if (item == null)
                 {
-                    AnsiConsole.MarkupLine("[red]Item not found.[/]");
+                    AnsiConsole.MarkupLine("[red]No item found.[/]");
                     return;
                 }
 
@@ -123,7 +113,7 @@ namespace RestaurangSystem.Models
             }
         }
 
-        public void SortByPrice(DataStore<MenuItem> dataStore)
+        public static void SortByPrice(DataStore<MenuItem> dataStore)
         {
             // Sortera från billigast till dyrast
             var sorted = dataStore.items.OrderBy(m => m.Price);
@@ -136,7 +126,7 @@ namespace RestaurangSystem.Models
         }
 
 
-        public static void ShowMenu()
+        public static void ShowMenu(DataStore<MenuItem> menuStore)
         {
             bool running = true;
 
@@ -145,19 +135,26 @@ namespace RestaurangSystem.Models
                 var choice = AnsiConsole.Prompt(
                         new SelectionPrompt<string>()
                             .Title("[green]What do you want to do?[/]")
-                            .AddChoices("Add MenuItem", "Show Menu", "Finish"));
+                            .AddChoices("Show Menu", "Show Only Vegetarian", "Show By Category", "Sort By Price", "Back"));
 
                 switch (choice)
                 {
-                    case "Add MenuItem":
-                        Console.WriteLine("This is the AddMenuItem()");
-                        break;
-
                     case "Show Menu":
-                        Console.WriteLine("This is the ShowMenuItems()");
+                        MenuHelper.ShowMenuItems(menuStore);
                         break;
 
-                    case "Finish":
+                    case "Show Only Vegetarian":
+                        ShowOnlyVegetarian(menuStore);
+                        break;
+
+                    case "Show By Category":
+                        ShowByCategory(menuStore);
+                        break;
+
+                    case "Sort By Price":
+                        SortByPrice(menuStore);
+                        break;
+                    case "Back":
                         running = false;
                         break;
                 }
@@ -165,7 +162,7 @@ namespace RestaurangSystem.Models
         }
 
 
-        public void ShowOnlyVegetarian(DataStore<MenuItem> dataStore)
+        public static void ShowOnlyVegetarian(DataStore<MenuItem> dataStore)
         {
             // Välj ut bara de vegetariska rätterna
             var vegetarian = dataStore.items.Where(m => m.IsVegetarian);
@@ -183,7 +180,7 @@ namespace RestaurangSystem.Models
                 AnsiConsole.WriteLine($"{item.Name} - {item.Price} kr");
             }
         }
-        public void ShowByCategory(DataStore<MenuItem> dataStore)
+        public static void ShowByCategory(DataStore<MenuItem> dataStore)
         {
             // Låt användaren välja kategori med pilarna
             var category = AnsiConsole.Prompt(

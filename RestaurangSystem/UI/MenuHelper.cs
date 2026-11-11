@@ -26,16 +26,20 @@ namespace RestaurangSystem.UI
                     .HighlightStyle(new Style(foreground: Accent, decoration: Decoration.Bold))
                     .UseConverter(choice => choice switch
                     {
-                        StartMenuChoice.Order => "Order",
-                        StartMenuChoice.LogIn => "Log In",
+                        StartMenuChoice.GuestView => "Guest View",
+                        StartMenuChoice.StaffView => "Staff View",
                         StartMenuChoice.Exit => "Exit",
                         _ => choice.ToString()
                     })
                     .AddChoices(Enum.GetValues<StartMenuChoice>()));
         }
 
-        public static void ChoiceMenu()
+        public static string StaffPortal()
         {
+            return AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("[green]What do you want to do?[/]")
+                .AddChoices("Log In", "Register", "Back"));
         }
 
         public static void ShowMenuItems(DataStore<MenuItem> dataStore)
@@ -136,6 +140,8 @@ namespace RestaurangSystem.UI
 
         public static void ShowOrderMenu()
         {
+            DataStore<Order> orderDataStore = new DataStore<Order>();
+            orderDataStore.LoadFromJson();
             bool running = true;
 
             while (running)
@@ -143,48 +149,26 @@ namespace RestaurangSystem.UI
                 var choice = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
                         .Title("[green]Orders - what would you like to do?[/]")
-                        .AddChoices("Create new order", "Add item to order", "Show orders", "Back"));
+                        .AddChoices("Show orders", "Update Order Status", "Back"));
 
                 switch (choice)
                 {
-                    case "Create new order":
-                        Console.WriteLine("CreateOrder() goes here");
-                        break;
-
-                    case "Add item to order":
-                        Console.WriteLine("AddToOrder() goes here");
-                        break;
-
                     case "Show orders":
-                        Console.WriteLine("ShowOrders() goes here");
+                        AuthService.currentStaff.ShowOrders();
                         break;
-
+                    case "Update Order Status":
+                        var order = orderDataStore.FindItem(o => o.Id == AnsiConsole.Ask<int>("Enter the order ID to update:"));
+                        if (order != null)
+                        {
+                            var newStatus = AnsiConsole.Prompt(
+                                new SelectionPrompt<OrderStatus>()
+                                    .Title("Select the new status:")
+                                    .AddChoices(Enum.GetValues<OrderStatus>()));
+                            order.UpdateStatus(newStatus);
+                            orderDataStore.SaveToJson();
+                        }
+                        break;
                     case "Back":
-                        running = false;
-                        break;
-                }
-            }
-        }
-
-        public static void ReturnToMainMenu()
-        {
-            bool running = true;
-
-            while (running)
-            {
-                StartMenuChoice choice = StartMenu();
-
-                switch (choice)
-                {
-                    case StartMenuChoice.Order:
-                        ShowOrderMenu();
-                        break;
-
-                    case StartMenuChoice.LogIn:
-                        //LogInMenu();
-                        break;
-
-                    case StartMenuChoice.Exit:
                         running = false;
                         break;
                 }
@@ -221,60 +205,31 @@ namespace RestaurangSystem.UI
                     .AddChoices(Enum.GetValues<StaffMenuChoice>()));
         }
 
-        public static void GuestMenu(DataStore<MenuItem> menuStore)
+        public static GuestMenuChoice GuestMenu()
         {
-            // Controls whether the menu keeps showing
-            bool running = true;
 
-            while (running)
-            {
-                // Clear the screen so the menu is clean each time
-                AnsiConsole.Clear();
-                // Show the menu and store the guest's choice
-                var choice = AnsiConsole.Prompt(
-                    new SelectionPrompt<string>()
-                        .Title("[green]Guest - what would you like to do?[/]")
-                        .AddChoices(
-                            "Show menu",
-                            "Show my reservation",
-                            "Cancel reservation",
-                            "Show order status",
-                            "Back"));
-                // Perform the action the guest picked
-                switch (choice)
-                {
-                    // Show all menu items in a table
-                    case "Show menu":
-                        ShowMenuItems(menuStore);
-                        break;
+            // Show the menu and store the guest's choice
+            AnsiConsole.Clear();
+            AnsiConsole.Write(
+                new Panel("Welcome! Pick an option below.")
+                    .Header($"[{Accent.ToMarkup()}]Restauraunt Manager[/]")
+                    .Border(BoxBorder.Rounded)
+                    .BorderColor(Accent));
 
-                    case "Show my reservation":
-                        // Placeholder until the Guest class is ready
-                        Console.WriteLine("ShowReservation() goes here");
-                        break;
-
-                    case "Cancel reservation":
-                        // Placeholder until the Guest class is ready
-                        Console.WriteLine("CancelReservation() goes here");
-                        break;
-
-                    case "Show order status":
-                        // Placeholder until the Guest class is ready
-                        Console.WriteLine("ShowOrderStatus() goes here");
-                        break;
-
-                    case "Back":
-                        // End the loop and return to the previous menu
-                        running = false;
-                        break;
-                }
-                // Wait for a key press so the output can be read before the screen clears
-                if (running)
-                {
-                    AnsiConsole.MarkupLine("\n[grey]Press any key to continue...[/]");
-                    Console.ReadKey(true);
-                }
-            }
+            return AnsiConsole.Prompt(
+                new SelectionPrompt<GuestMenuChoice>()
+                    .Title($"[bold {Accent.ToMarkup()}]What would you like to do?[/]")
+                    .PageSize(10)
+                    .WrapAround()
+                    .HighlightStyle(new Style(foreground: Accent, decoration: Decoration.Bold))
+                    .UseConverter(choice => choice switch
+                    {
+                        GuestMenuChoice.CreateOrder => "Create Order",
+                        GuestMenuChoice.ShowMenu => "Show Menu",
+                        GuestMenuChoice.ShowOrderStatus => "Show Order Status",
+                        GuestMenuChoice.Back => "Back"
+                    })
+                    .AddChoices(Enum.GetValues<GuestMenuChoice>()));
         }
         public static void ResetPasswordMenu(DataStore<Staff> staffList)
         {

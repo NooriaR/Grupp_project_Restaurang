@@ -65,5 +65,15 @@ namespace RestaurangSystem.Services
 
         }
 
+        public static void LogOut()
+        {
+            if (currentStaff == null) return;
+
+            currentStaff.IsLoggedIn = false;
+            Logger.Info($"Logout: {currentStaff.Email}");
+
+            currentStaff = null; // glöm bort vem som var inloggad
+        }
+
     }
 }

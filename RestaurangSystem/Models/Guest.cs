@@ -31,7 +31,7 @@ namespace RestaurangSystem.Models
                 AnsiConsole.Write(table);  // rita ut tabellen i terminalen
 
                 // ---------- STEG 2: Skapa en tom lista för gästens beställning ----------
-                var order = new List<MenuItem>();
+                var order = new Order();  // skapa en ny Order-objekt som kommer att innehålla gästens valda rätter
 
                 // ---------- STEG 3: Låt gästen välja rätt för rätt ----------
                 while (true)  // fortsätt fråga tills gästen väljer "Done"
@@ -52,13 +52,13 @@ namespace RestaurangSystem.Models
                     MenuItem selected = menuItems.First(m => m.Name == choice);
 
                     // Lägg till rätten i beställningen
-                    order.Add(selected);
+                    order.AddToOrder(selected);
 
                     AnsiConsole.MarkupLine($"[green]{selected.Name} added to your order.[/]");
                 }
 
                 // ---------- STEG 4: Om gästen inte valde något ----------
-                if (order.Count == 0)
+                if (order.OrderedItems.Count == 0)
                 {
                     AnsiConsole.MarkupLine("[yellow]Your order is empty.[/]");
                     return;  // avsluta metoden här
@@ -69,7 +69,7 @@ namespace RestaurangSystem.Models
                 summary.AddColumn("Dish");
                 summary.AddColumn("Price");
 
-                foreach (var item in order)
+                foreach (var item in order.OrderedItems)
                 {
                     summary.AddRow(item.Name, $"{item.Price} kr");
                 }
@@ -77,7 +77,7 @@ namespace RestaurangSystem.Models
                 AnsiConsole.Write(summary);
 
                 // ---------- STEG 6: Räkna ut och visa totalpriset ----------
-                var total = order.Sum(item => item.Price);  // Sum lägger ihop alla priser
+                var total = order.CalculateSumPrice();  // Sum lägger ihop alla priser
 
                 AnsiConsole.MarkupLine($"[bold]Total: {total} kr[/]");
                 AnsiConsole.MarkupLine("[green]Thank you for your order![/]");

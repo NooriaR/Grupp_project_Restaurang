@@ -1,5 +1,4 @@
-﻿using RestaurangSystem.Models;
-using Spectre.Console;
+﻿using Spectre.Console;
 
 namespace RestaurangSystem
 {
@@ -9,7 +8,8 @@ namespace RestaurangSystem
         {
 
         }
-
+          
     }
-    
+
 }
+

@@ -67,10 +67,10 @@ namespace RestaurangSystem.Services
 
         public static void LogOut()
         {
-            if (currentStaff == null) return;
+            if (currentStaff == null) return; // kollar om det finns en staff
 
-            currentStaff.IsLoggedIn = false;
-            Logger.Info($"Logout: {currentStaff.Email}");
+            currentStaff.IsLoggedIn = false; // sätter isloggedin till false, vilket stoppar staff att kunna se staffmenu
+            Logger.Info($"Logout: {currentStaff.Email}"); // skickar logg
 
             currentStaff = null; // glöm bort vem som var inloggad
         }

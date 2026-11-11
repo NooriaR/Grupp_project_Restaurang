@@ -12,7 +12,6 @@ namespace RestaurangSystem.Services
 
 
         // Metoder
-
         public static bool StartReset(string email, DataStore<Staff> staffList, out string code) // letar upp personalen och skapar en engångskod
         {
             code = "";

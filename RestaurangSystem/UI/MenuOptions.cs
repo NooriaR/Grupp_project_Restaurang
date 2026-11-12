@@ -26,6 +26,7 @@ namespace RestaurangSystem.UI
         CreateOrder,
         ShowMenu,
         ShowOrderStatus,
+        MakeReservation,
         Back
     }
 }

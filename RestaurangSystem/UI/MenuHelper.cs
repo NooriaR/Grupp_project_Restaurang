@@ -153,7 +153,7 @@ namespace RestaurangSystem.UI
 
             AnsiConsole.Clear(); // rensar skärmen så att menyn alltid ritas på en ren skärm
             AnsiConsole.Write(
-                new Panel("Welcome! Pick an option below.") // rutan med välkomsttexten
+                new Panel($"Welcome {AuthService.currentStaff.Name}! Pick an option below.") // rutan med välkomsttexten
                     .Header($"[{accent.ToMarkup()}]Restauraunt Manager[/]") // rubriken i rutans övre kant, i accentfärgen
                     .Border(BoxBorder.Rounded) // rundade hörn på ramen
                     .BorderColor(accent)); // ramen får samma färg som resten av menyn
@@ -177,13 +177,13 @@ namespace RestaurangSystem.UI
                     .AddChoices(Enum.GetValues<StaffMenuChoice>())); // lägger in alla värden i enumen som val, så nya värden dyker upp automatiskt
         }
 
-        public static GuestMenuChoice GuestMenu() // den här metoden visar gästmenyn och returnerar det alternativ gästen väljer
+        public static GuestMenuChoice GuestMenu(Guest guest) // den här metoden visar gästmenyn och returnerar det alternativ gästen väljer
         {
 
             // Visa menyn och spara gästens val
             AnsiConsole.Clear(); // rensar skärmen så att menyn alltid ritas på en ren skärm
             AnsiConsole.Write(
-                new Panel("Welcome! Pick an option below.") // rutan med välkomsttexten
+                new Panel($"Welcome,{guest.Name}! Pick an option below.") // rutan med välkomsttexten
                     .Header($"[{Accent.ToMarkup()}]Restauraunt Manager[/]") // rubriken i rutans övre kant, i accentfärgen
                     .Border(BoxBorder.Rounded) // rundade hörn på ramen
                     .BorderColor(Accent)); // ramen får samma accentfärg som resten av menyn
@@ -199,6 +199,7 @@ namespace RestaurangSystem.UI
                         GuestMenuChoice.CreateOrder => "Create Order", // texten som visas för CreateOrder
                         GuestMenuChoice.ShowMenu => "Show Menu", // texten som visas för ShowMenu
                         GuestMenuChoice.ShowOrderStatus => "Show Order Status", // texten som visas för ShowOrderStatus
+                        GuestMenuChoice.MakeReservation => "Make Reservation", // texten som visas för MakeReservation
                         GuestMenuChoice.Back => "Back", // texten som visas för Back
                         _ => choice.ToString() // reservval: visar enum-namnet om något värde saknas ovan
                     })

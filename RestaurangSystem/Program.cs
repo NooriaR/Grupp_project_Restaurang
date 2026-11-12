@@ -9,8 +9,5 @@ namespace RestaurangSystem
         {
             AppRunner.Run();
         }
-          
     }
-
 }
-

@@ -13,7 +13,7 @@ namespace RestaurangSystem.Services
             stafflist.LoadFromJson();
             StartMenuLogic(stafflist);
         }
-        public static void StaffMenuLogic()
+        public static void StaffMenuLogic() // Det här är logiken för personalmenyn, som körs när en personalmedlem är inloggad
         {
             DataStore<MenuItem> menuDataStore = new DataStore<MenuItem>();
             menuDataStore.LoadFromJson();
@@ -48,24 +48,24 @@ namespace RestaurangSystem.Services
         }
         public static void GuestMenuLogic()
         {
-            DataStore<MenuItem> menuDataStore = new DataStore<MenuItem>();
+            DataStore<MenuItem> menuDataStore = new DataStore<MenuItem>(); // skapar en instans av DataStore för MenuItem
             menuDataStore.LoadFromJson();
-            RestaurantMenu menu = new RestaurantMenu();
-            bool isGuest = true;
-            Guest guest = new Guest();
-            guest.Name = AnsiConsole.Ask<string>("What's your name?");
+            RestaurantMenu menu = new RestaurantMenu(); // skapar en instans av RestaurantMenu
+            bool isBrowsing = true; 
+            Guest guest = new Guest(); // skapar en instans av Guest
+            guest.Name = AnsiConsole.Ask<string>("What's your name?"); // frågar användaren efter deras namn och sparar det i guest-objektet
 
-            while (isGuest == true)
+            while (isBrowsing == true)
             {
-                // Perform the action the guest picked
-                var choice = MenuHelper.GuestMenu();
+                // gör en meny för gästen att välja mellan olika alternativ
+                var choice = MenuHelper.GuestMenu(guest);
                 switch (choice)
                 {
-                    //Make a order
+                    //Gö em order för att skapa en beställning
                     case GuestMenuChoice.CreateOrder:
                         guest.CreateOrder(menu.MenuItems);
                         break;
-                    // Show all menu items in a table
+                    // Visar menyn för gästen
                     case GuestMenuChoice.ShowMenu:
                         RestaurantMenu.ShowMenu(menuDataStore);
                         break;
@@ -74,43 +74,50 @@ namespace RestaurangSystem.Services
                         guest.ShowOrderStatus();
                         break;
 
+                    case GuestMenuChoice.MakeReservation:
+                        guest.MakeReservation();
+                        break;
+
                     case GuestMenuChoice.Back:
-                        // End the loop and return to the previous menu
+                        // Slutar loopen och går tillbaka till startmenyn
                         menuDataStore.SaveToJson();
-                        isGuest = false;
+                        isBrowsing = false;
                         break;
                 }
             }
         }
 
-        public static void LogInAndRegisterMenuLogic(DataStore<Staff> stafflist)
+        public static void LogInAndRegisterMenuLogic(DataStore<Staff> stafflist) // Det här är logiken för inloggnings- och registreringsmenyn, som körs när en personalmedlem vill logga in eller registrera sig
         {
-            bool isRunning = true;
-            while (isRunning)
+            // Loopa tills användaren väljer att gå tillbaka
             {
-                var choice = MenuHelper.StaffPortal();
-                switch (choice)
+                bool isRunning = true;
+                while (isRunning)
                 {
-                    case "Log In":
-                        bool loginsuccesfull = MenuHelper.LogInMenu(stafflist);
-                        if (loginsuccesfull == true)
-                        {
-                            StaffMenuLogic();
+                    var choice = MenuHelper.StaffPortal();
+                    switch (choice)
+                    {
+                        case "Log In":
+                            bool loginsuccesfull = MenuHelper.LogInMenu(stafflist);
+                            if (loginsuccesfull == true)
+                            {
+                                StaffMenuLogic();
+                                break;
+                            }
                             break;
-                        }
-                        break;
-                    case "Register":
-                        Staff staff = new Staff();
-                        staff.Register();
-                        break;
-                    case "Back":
-                        isRunning = false;
-                        break;
+                        case "Register":
+                            Staff staff = new Staff();
+                            staff.Register();
+                            break;
+                        case "Back":
+                            isRunning = false;
+                            break;
+                    }
                 }
             }
         }
 
-        public static void StartMenuLogic(DataStore<Staff> stafflist)
+        public static void StartMenuLogic(DataStore<Staff> stafflist) // det här är logiken för startmenyn, som körs när programmet startar
         {
             bool isRunning = true;
             while (isRunning)
@@ -137,7 +144,7 @@ namespace RestaurangSystem.Services
             }
         }
 
-        public static void ShowOrderMenuLogic()
+        public static void ShowOrderMenuLogic() // det här är logik för orderhanteringsmenyn, som körs när en personalmedlem vill hantera beställningar
         {
             DataStore<Order> orderDataStore = new DataStore<Order>();
             orderDataStore.LoadFromJson();

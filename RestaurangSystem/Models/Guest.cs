@@ -97,6 +97,7 @@ namespace RestaurangSystem.Models
         public void MakeReservation()
         {
             DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
+            reservation = new Reservation(); // Skapar en ny instans av Reservation-klassen
             reservation.CreateReservation(reservationDataStore);
 
         }

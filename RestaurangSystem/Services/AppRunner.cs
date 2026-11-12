@@ -128,16 +128,15 @@ namespace RestaurangSystem.Services
                 switch (choice)
                 {
                     case StartMenuChoice.GuestView:
-                        AppRunner.GuestMenuLogic();
+                        GuestMenuLogic();
                         break;
                     case StartMenuChoice.StaffView:
-                        AppRunner.LogInAndRegisterMenuLogic(stafflist);
+                        LogInAndRegisterMenuLogic(stafflist);
                         break;
 
                     case StartMenuChoice.Exit:
                         // Avsluta programmet.
                         Console.WriteLine("Avslutar programmet...");
-                        stafflist.SaveToJson(); // spara personaldata innan programmet avslutas
                         isRunning = false;
                         return;
                 }

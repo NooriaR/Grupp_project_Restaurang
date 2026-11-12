@@ -93,6 +93,13 @@ namespace RestaurangSystem.Models
         // Metoder (Methods)
 
         // Visar information om gästens nuvarande reservation.
+
+        public void MakeReservation()
+        {
+            DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
+            reservation.CreateReservation(reservationDataStore);
+
+        }
         public void ShowReservation()
         {
             // Kontrollerar om gästen har en reservation.

@@ -42,6 +42,7 @@ namespace RestaurangSystem.Models
 
                 // AddItem sätter Id automatiskt
                 dataStore.AddItem(reservation);
+                dataStore.SaveToJson();
 
                 AnsiConsole.MarkupLine($"[green]Reservation created for {Markup.Escape(name)}! Id: {reservation.Id}[/]");
             }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using RestaurangSystem.UI;
+﻿using RestaurangSystem.UI;
 using RestaurangSystem.Models;
 using Spectre.Console;
 
@@ -9,6 +6,13 @@ namespace RestaurangSystem.Services
 {
     public static class AppRunner
     {
+
+        public static void Run()
+        {
+            DataStore<Staff> stafflist = new DataStore<Staff>();
+            stafflist.LoadFromJson();
+            StartMenuLogic(stafflist);
+        }
         public static void StaffMenuLogic()
         {
             DataStore<MenuItem> menuDataStore = new DataStore<MenuItem>();
@@ -29,7 +33,7 @@ namespace RestaurangSystem.Services
                         menu.UppdateMenuItem(menuDataStore);
                         break;
                     case StaffMenuChoice.ManageOrders:
-                        MenuHelper.ShowOrderMenu();
+                        ShowOrderMenuLogic();
                         break;
                     case StaffMenuChoice.ShowSchedule:
                         AuthService.currentStaff.WorkingSchedule();
@@ -79,7 +83,7 @@ namespace RestaurangSystem.Services
             }
         }
 
-        public static void LogInAndRegisterLogic(DataStore<Staff> stafflist)
+        public static void LogInAndRegisterMenuLogic(DataStore<Staff> stafflist)
         {
             bool isRunning = true;
             while (isRunning)
@@ -101,6 +105,67 @@ namespace RestaurangSystem.Services
                         break;
                     case "Back":
                         isRunning = false;
+                        break;
+                }
+            }
+        }
+
+        public static void StartMenuLogic(DataStore<Staff> stafflist)
+        {
+            bool isRunning = true;
+            while (isRunning)
+            {
+                // Visa huvudmenyn och få användarens val.
+                var choice = MenuHelper.StartMenu();
+                // Hantera användarens val.
+                switch (choice)
+                {
+                    case StartMenuChoice.GuestView:
+                        AppRunner.GuestMenuLogic();
+                        break;
+                    case StartMenuChoice.StaffView:
+                        AppRunner.LogInAndRegisterMenuLogic(stafflist);
+                        break;
+
+                    case StartMenuChoice.Exit:
+                        // Avsluta programmet.
+                        Console.WriteLine("Avslutar programmet...");
+                        stafflist.SaveToJson(); // spara personaldata innan programmet avslutas
+                        isRunning = false;
+                        return;
+                }
+            }
+        }
+
+        public static void ShowOrderMenuLogic()
+        {
+            DataStore<Order> orderDataStore = new DataStore<Order>();
+            orderDataStore.LoadFromJson();
+            bool running = true;
+
+            while (running)
+            {
+                var choice =  MenuHelper.ShowOrderMenu();
+
+                switch (choice)
+                {
+                    case "Show orders":
+                        AuthService.currentStaff.ShowOrders();
+                        break;
+                    case "Update Order Status":
+                        var order = orderDataStore.FindItem(o => o.Id == AnsiConsole.Ask<int>("Enter the order ID to update:"));
+                        if (order != null)
+                        {
+                            var newStatus = AnsiConsole.Prompt(
+                                new SelectionPrompt<OrderStatus>()
+                                    .Title("Select the new status:")
+                                    .AddChoices(Enum.GetValues<OrderStatus>()));
+                            order.UpdateStatus(newStatus);
+                            orderDataStore.SaveToJson();
+                        }
+                        break;
+                    case "Back":
+                        running = false;
                         break;
                 }
             }

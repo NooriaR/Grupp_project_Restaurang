@@ -81,6 +81,9 @@ namespace RestaurangSystem.Services
                     case GuestMenuChoice.ShowReservation:
                         guest.ShowReservation();
                         break;
+                    case GuestMenuChoice.CancelReservation:
+                        guest.CancelReservation();
+                        break;
                     case GuestMenuChoice.Back:
                         // Slutar loopen och går tillbaka till startmenyn
                         menuDataStore.SaveToJson();

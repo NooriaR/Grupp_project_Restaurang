@@ -201,6 +201,7 @@ namespace RestaurangSystem.UI
                         GuestMenuChoice.ShowOrderStatus => "Show Order Status", // texten som visas för ShowOrderStatus
                         GuestMenuChoice.MakeReservation => "Make Reservation", // texten som visas för MakeReservation
                         GuestMenuChoice.ShowReservation => "Show Reservation", // texten som visas för ShowReservation
+                        GuestMenuChoice.CancelReservation => "Cancel Reservation", // texten som visas för CancelReservation
                         GuestMenuChoice.Back => "Back", // texten som visas för Back
                         _ => choice.ToString() // reservval: visar enum-namnet om något värde saknas ovan
                     })

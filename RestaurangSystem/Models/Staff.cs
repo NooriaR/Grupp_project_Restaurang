@@ -19,6 +19,32 @@ namespace RestaurangSystem.Models
         // Varje anställd får ett eget tomt arbetsschema.
         public WorkSchedule Schedule { get; set; } = new WorkSchedule();
 
+
+        public void ShowOrders()
+        {
+            DataStore<Order> orderDataStore = new DataStore<Order>();
+            orderDataStore.LoadFromJson();
+            var orders = orderDataStore.items;
+            if (orders.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[yellow]No orders found.[/]");
+                return;
+            }
+            var table = new Table();
+            table.AddColumn("Order ID");
+            table.AddColumn("Guest Name");
+            table.AddColumn("Items");
+            table.AddColumn("Total Price");
+            table.AddColumn("Status");
+            foreach (var order in orders)
+            {
+                string items = string.Join(", ", order.OrderedItems.Select(i => i.Name));
+                table.AddRow(order.Id.ToString(),  items, $"{order.CalculateSumPrice()} kr", order.Status.ToString());
+            }
+            AnsiConsole.Write(table);
+
+        }
+
         public void Register()
         {
             // STEG 1: Skapa en DataStore för Staff och ladda det som redan är sparat

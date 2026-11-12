@@ -5,37 +5,42 @@ namespace RestaurangSystem.UI
 {
     public static class MenuHelper
     {
-        public static Color Accent = Color.Orange1;
+        //Attribut
+        public static Color Accent = Color.Orange1; // den här färgen används för att markera rubriker och val i menyerna, kan ändras till vilken färg som helst från Spectre.Console.Color
 
-        // Methods
-        public static StartMenuChoice StartMenu()
+        // Metoder
+        public static StartMenuChoice StartMenu() // den här metoden visar startmenyn och returnerar det alternativ användaren väljer
         {
 
-            AnsiConsole.Clear();
+            AnsiConsole.Clear(); // rensar skärmen så att menyn alltid ritas på en ren skärm
             AnsiConsole.Write(
-                new Panel("Welcome! Pick an option below.")
-                    .Header($"[{Accent.ToMarkup()}]Restauraunt Manager[/]")
-                    .Border(BoxBorder.Rounded)
-                    .BorderColor(Accent));
+                new Panel("Welcome! Pick an option below.") // rutan med välkomsttexten
+                    .Header($"[{Accent.ToMarkup()}]Restauraunt Manager[/]") // rubriken i rutans övre kant, i accentfärgen
+                    .Border(BoxBorder.Rounded) // rundade hörn på ramen
+                    .BorderColor(Accent)); // ramen får samma accentfärg som resten av menyn
 
-            return AnsiConsole.Prompt(
-                new SelectionPrompt<StartMenuChoice>()
-                    .Title($"[bold {Accent.ToMarkup()}]What would you like to do?[/]")
-                    .PageSize(10)
-                    .WrapAround()
-                    .HighlightStyle(new Style(foreground: Accent, decoration: Decoration.Bold))
-                    .UseConverter(choice => choice switch
+            return AnsiConsole.Prompt( // visar valmenyn, väntar på valet och returnerar det direkt
+                new SelectionPrompt<StartMenuChoice>() // valen är enum-värden, så resultatet är en StartMenuChoice och inte en text
+                    .Title($"[bold {Accent.ToMarkup()}]What would you like to do?[/]") // frågan som visas ovanför valen
+                    .PageSize(10) // hur många rader menyn visar åt gången
+                    .WrapAround() // går man förbi sista valet hamnar man på det första, och tvärtom
+                    .HighlightStyle(new Style(foreground: Accent, decoration: Decoration.Bold)) // det markerade valet blir fetstilt i accentfärgen
+                    .UseConverter(choice => choice switch // bestämmer vilken text användaren ser för varje enum-värde
                     {
-                        StartMenuChoice.Order => "Order",
-                        StartMenuChoice.LogIn => "Log In",
-                        StartMenuChoice.Exit => "Exit",
-                        _ => choice.ToString()
+                        StartMenuChoice.GuestView => "Guest View", // texten som visas för GuestView
+                        StartMenuChoice.StaffView => "Staff View", // texten som visas för StaffView
+                        StartMenuChoice.Exit => "Exit", // texten som visas för Exit
+                        _ => choice.ToString() // reservval: visar enum-namnet om något värde saknas ovan
                     })
-                    .AddChoices(Enum.GetValues<StartMenuChoice>()));
+                    .AddChoices(Enum.GetValues<StartMenuChoice>())); // lägger in alla värden i enumen som val, så nya värden dyker upp automatiskt
         }
 
-        public static void ChoiceMenu()
+        public static string StaffPortal() // den här metoden visar personalportalens meny och returnerar texten på det val användaren gör
         {
+            return AnsiConsole.Prompt( // visar menyn, väntar på valet och returnerar det direkt
+            new SelectionPrompt<string>() // valen är vanliga strängar, så resultatet är en text och inte ett enum-värde
+                .Title("[green]What do you want to do?[/]") // frågan som visas ovanför valen, i grönt
+                .AddChoices("Log In", "Register", "Back")); // de tre valen som användaren kan välja mellan
         }
 
         public static void ShowMenuItems(DataStore<MenuItem> dataStore)
@@ -134,147 +139,73 @@ namespace RestaurangSystem.UI
             return false; // returnerar false om for loopen misslyckas
         }
 
-        public static void ShowOrderMenu()
+        public static string ShowOrderMenu()
         {
-            bool running = true;
-
-            while (running)
-            {
-                var choice = AnsiConsole.Prompt(
-                    new SelectionPrompt<string>()
-                        .Title("[green]Orders - what would you like to do?[/]")
-                        .AddChoices("Create new order", "Add item to order", "Show orders", "Back"));
-
-                switch (choice)
-                {
-                    case "Create new order":
-                        Console.WriteLine("CreateOrder() goes here");
-                        break;
-
-                    case "Add item to order":
-                        Console.WriteLine("AddToOrder() goes here");
-                        break;
-
-                    case "Show orders":
-                        Console.WriteLine("ShowOrders() goes here");
-                        break;
-
-                    case "Back":
-                        running = false;
-                        break;
-                }
-            }
-        }
-
-        public static void ReturnToMainMenu()
-        {
-            bool running = true;
-
-            while (running)
-            {
-                StartMenuChoice choice = StartMenu();
-
-                switch (choice)
-                {
-                    case StartMenuChoice.Order:
-                        ShowOrderMenu();
-                        break;
-
-                    case StartMenuChoice.LogIn:
-                        //LogInMenu();
-                        break;
-
-                    case StartMenuChoice.Exit:
-                        running = false;
-                        break;
-                }
-            }
-        }
-
-        public static StaffMenuChoice StaffMenu()
-        {
-            var accent = Color.Blue1;
-
-            AnsiConsole.Clear();
-            AnsiConsole.Write(
-                new Panel("Welcome! Pick an option below.")
-                    .Header($"[{accent.ToMarkup()}]Restauraunt Manager[/]")
-                    .Border(BoxBorder.Rounded)
-                    .BorderColor(accent));
-
             return AnsiConsole.Prompt(
-                new SelectionPrompt<StaffMenuChoice>()
-                    .Title($"[bold {accent.ToMarkup()}]What would you like to do?[/]")
-                    .PageSize(10)
-                    .WrapAround()
-                    .HighlightStyle(new Style(foreground: accent, decoration: Decoration.Bold))
-                    .UseConverter(choice => choice switch
-                    {
-                        StaffMenuChoice.AddToMenu => "Add to Menu",
-                        StaffMenuChoice.RemovefromMenu => "Remove from Menu",
-                        StaffMenuChoice.UpdateitemonMenu => "Update item on Menu",
-                        StaffMenuChoice.ManageOrders => "Manage Orders",
-                        StaffMenuChoice.ShowSchedule => "Show Schedule",
-                        StaffMenuChoice.Logout => "Log out",
-                        _ => choice.ToString()
-                    })
-                    .AddChoices(Enum.GetValues<StaffMenuChoice>()));
+                     new SelectionPrompt<string>()
+                         .Title("[green]Orders - what would you like to do?[/]")
+                         .AddChoices("Show orders", "Update Order Status", "Back"));
         }
 
-        public static void GuestMenu(DataStore<MenuItem> menuStore)
+        public static StaffMenuChoice StaffMenu() // den här metoden visar personalmenyn och returnerar det alternativ användaren väljer
         {
-            // Controls whether the menu keeps showing
-            bool running = true;
+            var accent = Color.Blue1; // en lokal accentfärg för den här menyn, så att personalmenyn får ett eget utseende
 
-            while (running)
-            {
-                // Clear the screen so the menu is clean each time
-                AnsiConsole.Clear();
-                // Show the menu and store the guest's choice
-                var choice = AnsiConsole.Prompt(
-                    new SelectionPrompt<string>()
-                        .Title("[green]Guest - what would you like to do?[/]")
-                        .AddChoices(
-                            "Show menu",
-                            "Show my reservation",
-                            "Cancel reservation",
-                            "Show order status",
-                            "Back"));
-                // Perform the action the guest picked
-                switch (choice)
-                {
-                    // Show all menu items in a table
-                    case "Show menu":
-                        ShowMenuItems(menuStore);
-                        break;
+            AnsiConsole.Clear(); // rensar skärmen så att menyn alltid ritas på en ren skärm
+            AnsiConsole.Write(
+                new Panel($"Welcome {AuthService.currentStaff.Name}! Pick an option below.") // rutan med välkomsttexten
+                    .Header($"[{accent.ToMarkup()}]Restauraunt Manager[/]") // rubriken i rutans övre kant, i accentfärgen
+                    .Border(BoxBorder.Rounded) // rundade hörn på ramen
+                    .BorderColor(accent)); // ramen får samma färg som resten av menyn
 
-                    case "Show my reservation":
-                        // Placeholder until the Guest class is ready
-                        Console.WriteLine("ShowReservation() goes here");
-                        break;
+            return AnsiConsole.Prompt( // visar valmenyn, väntar på valet och returnerar det direkt
+                new SelectionPrompt<StaffMenuChoice>() // valen är enum-värden, så resultatet är en StaffMenuChoice och inte en text
+                    .Title($"[bold {accent.ToMarkup()}]What would you like to do?[/]") // frågan som visas ovanför valen
+                    .PageSize(10) // hur många rader menyn visar åt gången
+                    .WrapAround() // går man förbi sista valet hamnar man på det första, och tvärtom
+                    .HighlightStyle(new Style(foreground: accent, decoration: Decoration.Bold)) // det markerade valet blir fetstilt i accentfärgen
+                    .UseConverter(choice => choice switch // bestämmer vilken text användaren ser för varje enum-värde
+                    {
+                        StaffMenuChoice.AddToMenu => "Add to Menu", // texten som visas för AddToMenu
+                        StaffMenuChoice.RemovefromMenu => "Remove from Menu", // texten som visas för RemovefromMenu
+                        StaffMenuChoice.UpdateitemonMenu => "Update item on Menu", // texten som visas för UpdateitemonMenu
+                        StaffMenuChoice.ManageOrders => "Manage Orders", // texten som visas för ManageOrders
+                        StaffMenuChoice.ShowSchedule => "Show Schedule", // texten som visas för ShowSchedule
+                        StaffMenuChoice.Logout => "Log out", // texten som visas för Logout
+                        _ => choice.ToString() // reservval: visar enum-namnet om något värde saknas ovan
+                    })
+                    .AddChoices(Enum.GetValues<StaffMenuChoice>())); // lägger in alla värden i enumen som val, så nya värden dyker upp automatiskt
+        }
 
-                    case "Cancel reservation":
-                        // Placeholder until the Guest class is ready
-                        Console.WriteLine("CancelReservation() goes here");
-                        break;
+        public static GuestMenuChoice GuestMenu(Guest guest) // den här metoden visar gästmenyn och returnerar det alternativ gästen väljer
+        {
 
-                    case "Show order status":
-                        // Placeholder until the Guest class is ready
-                        Console.WriteLine("ShowOrderStatus() goes here");
-                        break;
+            // Visa menyn och spara gästens val
+            AnsiConsole.Clear(); // rensar skärmen så att menyn alltid ritas på en ren skärm
+            AnsiConsole.Write(
+                new Panel($"Welcome,{guest.Name}! Pick an option below.") // rutan med välkomsttexten
+                    .Header($"[{Accent.ToMarkup()}]Restauraunt Manager[/]") // rubriken i rutans övre kant, i accentfärgen
+                    .Border(BoxBorder.Rounded) // rundade hörn på ramen
+                    .BorderColor(Accent)); // ramen får samma accentfärg som resten av menyn
 
-                    case "Back":
-                        // End the loop and return to the previous menu
-                        running = false;
-                        break;
-                }
-                // Wait for a key press so the output can be read before the screen clears
-                if (running)
-                {
-                    AnsiConsole.MarkupLine("\n[grey]Press any key to continue...[/]");
-                    Console.ReadKey(true);
-                }
-            }
+            return AnsiConsole.Prompt( // visar valmenyn, väntar på valet och returnerar det direkt
+                new SelectionPrompt<GuestMenuChoice>() // valen är enum-värden, så resultatet är en GuestMenuChoice och inte en text
+                    .Title($"[bold {Accent.ToMarkup()}]What would you like to do?[/]") // frågan som visas ovanför valen
+                    .PageSize(10) // hur många rader menyn visar åt gången
+                    .WrapAround() // går man förbi sista valet hamnar man på det första, och tvärtom
+                    .HighlightStyle(new Style(foreground: Accent, decoration: Decoration.Bold)) // det markerade valet blir fetstilt i accentfärgen
+                    .UseConverter(choice => choice switch // bestämmer vilken text användaren ser för varje enum-värde
+                    {
+                        GuestMenuChoice.CreateOrder => "Create Order", // texten som visas för CreateOrder
+                        GuestMenuChoice.ShowMenu => "Show Menu", // texten som visas för ShowMenu
+                        GuestMenuChoice.ShowOrderStatus => "Show Order Status", // texten som visas för ShowOrderStatus
+                        GuestMenuChoice.MakeReservation => "Make Reservation", // texten som visas för MakeReservation
+                        GuestMenuChoice.ShowReservation => "Show Reservation", // texten som visas för ShowReservation
+                        GuestMenuChoice.CancelReservation => "Cancel Reservation", // texten som visas för CancelReservation
+                        GuestMenuChoice.Back => "Back", // texten som visas för Back
+                        _ => choice.ToString() // reservval: visar enum-namnet om något värde saknas ovan
+                    })
+                    .AddChoices(Enum.GetValues<GuestMenuChoice>())); // lägger in alla värden i enumen som val, så nya värden dyker upp automatiskt
         }
         public static void ResetPasswordMenu(DataStore<Staff> staffList)
         {
@@ -323,12 +254,12 @@ namespace RestaurangSystem.UI
 
             if (AuthService.CompleteReset(enteredCode, newPassword, staffList))
             {
-               // Logger.Info($"Password reset for {email}");
+                Logger.Info($"Password reset for {email}");
                 AnsiConsole.MarkupLine("[green]Password updated. You can log in now.[/]");
             }
             else
             {
-                //Logger.Warning($"Failed password reset for {email}");
+                Logger.Warning($"Failed password reset for {email}");
                 ShowError("Wrong reset code.");
             }
 

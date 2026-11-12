@@ -1,14 +1,13 @@
-﻿namespace RestaurangSystem
+﻿using RestaurangSystem.Models;
+using RestaurangSystem.Services;
+using RestaurangSystem.UI;
+namespace RestaurangSystem
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-
-
+            AppRunner.Run();
         }
-          
     }
-
 }
-

@@ -19,6 +19,7 @@ namespace RestaurangSystem.Models
         public void CreateOrder(List<MenuItem> menuItems)
         {
             {
+                DataStore<Order> orderList = new DataStore<Order>();
                 // ---------- STEG 1: Visa menyn i en tabell ----------
                 var table = new Table();
                 table.AddColumn("Dish");   // rubrik för kolumn 1
@@ -65,6 +66,8 @@ namespace RestaurangSystem.Models
                     AnsiConsole.MarkupLine("[yellow]Your order is empty.[/]");
                     return;  // avsluta metoden här
                 }
+                orderList.AddItem(order);  // lägg till beställningen i listan över alla beställningar
+                orderList.SaveToJson();  // spara listan till JSON-filen
 
                 // ---------- STEG 5: Visa beställningen i en tabell ----------
                 var summary = new Table();
@@ -90,6 +93,14 @@ namespace RestaurangSystem.Models
         // Metoder (Methods)
 
         // Visar information om gästens nuvarande reservation.
+
+        public void MakeReservation()
+        {
+            DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
+            reservation = new Reservation(); // Skapar en ny instans av Reservation-klassen
+            reservation.CreateReservation(reservationDataStore);
+
+        }
         public void ShowReservation()
         {
             // Kontrollerar om gästen har en reservation.

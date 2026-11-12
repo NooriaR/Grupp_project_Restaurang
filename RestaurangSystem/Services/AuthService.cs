@@ -46,6 +46,7 @@ namespace RestaurangSystem.Services
         {
             try // testar inloggningen, om det inte finns någon användare visas ett felmeddelande
             {
+                staffList.LoadFromJson(); // laddar personaldata från JSON-filen
                 if (staffList.items.Count == 0) // kontrollerar om listan är tom
                 {
                     MenuHelper.ShowError("Please Register");
@@ -53,6 +54,7 @@ namespace RestaurangSystem.Services
                 }
                 // hittar en personal med rätt e-post och lösenord
                 currentStaff = staffList.FindItem(item => item.Email == email && item.Password == password);
+                currentStaff.IsLoggedIn = true; // sätter inloggningsstatusen till true
 
                 return currentStaff != null; // returnerar true om currentStaff inte är null
             }
@@ -70,8 +72,6 @@ namespace RestaurangSystem.Services
 
             currentStaff.IsLoggedIn = false; // sätter isloggedin till false, vilket stoppar staff att kunna se staffmenu
             Logger.Info($"Logout: {currentStaff.Email}"); // skickar logg
-
-            currentStaff = null; // glöm bort vem som var inloggad
         }
 
     }

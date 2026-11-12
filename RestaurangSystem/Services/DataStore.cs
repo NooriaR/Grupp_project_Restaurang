@@ -5,6 +5,8 @@ namespace RestaurangSystem.Services
     public class DataStore<T> where T : IIdentify
     {
         public List<T> items = new List<T>();
+        private static readonly string FilePath = $"{typeof(T).Name}.json"; // t.ex. Staff.json eller MenuItem.json
+
 
         public void AddItem(T item)
         {
@@ -31,21 +33,24 @@ namespace RestaurangSystem.Services
                 return default;
             }
         }
-        public void GetItem()
+        public void GetIds()
         {
-
+            foreach(var item in items)
+            {
+                AnsiConsole.MarkupLine($"[green]Item: {item.GetType().Name} Id: {item.Id}[/]");
+            }
         }
         public void SaveToJson()
         {
             try
             {
                 string json = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText("data.json", json);
-                AnsiConsole.MarkupLine("[green]Data sparades till data.json[/]");
+                File.WriteAllText(FilePath, json);
+                AnsiConsole.MarkupLine($"[green]Data sparades till {FilePath}[/]");
             }
             catch (UnauthorizedAccessException)
             {
-                AnsiConsole.MarkupLine("[red]Kunde inte spara: saknar behörighet till filen.[/]");
+                AnsiConsole.MarkupLine($"[red]Kunde inte spara: saknar behörighet till {FilePath}.[/]");
             }
             catch (IOException ex)
             {
@@ -56,13 +61,14 @@ namespace RestaurangSystem.Services
                 AnsiConsole.MarkupLine($"[red]Oväntat fel vid sparning:[/] {Markup.Escape(ex.Message)}");
             }
         }
+
         public void LoadFromJson()
         {
             try
             {
-                string json = File.ReadAllText("data.json");
+                string json = File.ReadAllText(FilePath);
                 items = JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
-                AnsiConsole.MarkupLine($"[green]Läste in {items.Count} objekt från data.json[/]");
+                AnsiConsole.MarkupLine($"[green]Läste in {items.Count} objekt från {FilePath}[/]");
             }
             catch (FileNotFoundException)
             {
@@ -70,7 +76,7 @@ namespace RestaurangSystem.Services
             }
             catch (JsonException)
             {
-                AnsiConsole.MarkupLine("[red]Filen data.json är trasig eller har fel format. Startar med tom lista.[/]");
+                AnsiConsole.MarkupLine($"[red]Filen {FilePath} är trasig eller har fel format. Startar med tom lista.[/]");
                 items = new List<T>();
             }
             catch (IOException ex)

@@ -35,7 +35,6 @@ namespace RestaurangSystem.Models
 
                 // ---------- STEG 2: Skapa en tom lista för gästens beställning ----------
                 var order = new Order();  // skapa en ny Order-objekt som kommer att innehålla gästens valda rätter
-
                 // ---------- STEG 3: Låt gästen välja rätt för rätt ----------
                 while (true)  // fortsätt fråga tills gästen väljer "Done"
                 {
@@ -68,6 +67,7 @@ namespace RestaurangSystem.Models
                 }
                 orderList.AddItem(order);  // lägg till beställningen i listan över alla beställningar
                 orderList.SaveToJson();  // spara listan till JSON-filen
+                Orderhistory.Add(order);
 
                 // ---------- STEG 5: Visa beställningen i en tabell ----------
                 var summary = new Table();

@@ -9,16 +9,16 @@ namespace RestaurangSystem.UI
 
         public static void ShowLogo()
         {
-    // Visar restaurangens namn som stor ASCII-text
-    AnsiConsole.Write(
-        new FigletText("Haven")
-            .Centered()
-            .Color(Accent));
+            // Visar restaurangens namn som stor ASCII-text
+            AnsiConsole.Write(
+                new FigletText("Haven")
+                    .Centered()
+                    .Color(Accent));
 
-    // Visar en kort slogan under loggan
-    AnsiConsole.Write(
-        new Rule("[grey]A calm place to eat[/]")
-            .RuleStyle(new Style(Accent)));
+            // Visar en kort slogan under loggan
+            AnsiConsole.Write(
+                new Rule("[grey]A calm place to eat[/]")
+                    .RuleStyle(new Style(Accent)));
         }
 
 

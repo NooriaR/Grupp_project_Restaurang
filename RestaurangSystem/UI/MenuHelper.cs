@@ -5,8 +5,22 @@ namespace RestaurangSystem.UI
 {
     public static class MenuHelper
     {
-        //Attribut
-        public static Color Accent = Color.Orange1; // den här färgen används för att markera rubriker och val i menyerna, kan ändras till vilken färg som helst från Spectre.Console.Color
+        public static Color Accent = Color.LightSkyBlue1;
+
+        public static void ShowLogo()
+        {
+            // Visar restaurangens namn som stor ASCII-text
+            AnsiConsole.Write(
+                new FigletText("Haven")
+                    .Centered()
+                    .Color(Accent));
+
+            // Visar en kort slogan under loggan
+            AnsiConsole.Write(
+                new Rule("[grey]A calm place to eat[/]")
+                    .RuleStyle(new Style(Accent)));
+        }
+
 
         // Metoder
         public static StartMenuChoice StartMenu() // den här metoden visar startmenyn och returnerar det alternativ användaren väljer

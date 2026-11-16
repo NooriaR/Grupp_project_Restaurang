@@ -1,8 +1,6 @@
 ﻿using Spectre.Console;
 using System.Text.Json.Serialization;
-
 ﻿using RestaurangSystem.Services;
-using Spectre.Console;
 namespace RestaurangSystem.Models
 {
     public class Staff : Users
@@ -18,6 +16,33 @@ namespace RestaurangSystem.Models
         // Kopplar ett arbetsschema till den anställda.
         // Varje anställd får ett eget tomt arbetsschema.
         public WorkSchedule Schedule { get; set; } = new WorkSchedule();
+
+
+        public void ShowOrders()
+        {
+            DataStore<Order> orderDataStore = new DataStore<Order>();
+            orderDataStore.LoadFromJson();
+            var orders = orderDataStore.items;
+            if (orders.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[yellow]No orders found.[/]");
+                return;
+            }
+            var table = new Table();
+            table.AddColumn("Order ID");
+            table.AddColumn("Guest Name");
+            table.AddColumn("Items");
+            table.AddColumn("Total Price");
+            table.AddColumn("Status");
+            foreach (var order in orders)
+            {
+                string items = string.Join(", ", order.OrderedItems.Select(i => i.Name));
+                string guests = string.Join("\n", order.Guests.Select(g => Markup.Escape(g.Name)));
+                table.AddRow(order.Id.ToString(), guests, items, $"{order.CalculateSumPrice()} kr", order.Status.ToString());
+            }
+            AnsiConsole.Write(table);
+
+        }
 
         public void Register()
         {

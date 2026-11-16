@@ -1,7 +1,6 @@
 ﻿using RestaurangSystem.UI;
 using RestaurangSystem.Models;
 using Spectre.Console;
-
 namespace RestaurangSystem.Services
 {
     public static class AppRunner

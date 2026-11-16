@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace RestaurangSystem.UI
+﻿namespace RestaurangSystem.UI
 {
     public enum StartMenuChoice // den här enumen används för att förenkla hur valet från StartMenu hämtas, och varje läge kan ges ett heltal för enklare åtkomst
     {

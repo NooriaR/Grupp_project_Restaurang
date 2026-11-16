@@ -1,6 +1,5 @@
 ﻿using RestaurangSystem.Services;
 using Spectre.Console;
-
 namespace RestaurangSystem.Models
 {
     public class Reservation : IIdentify

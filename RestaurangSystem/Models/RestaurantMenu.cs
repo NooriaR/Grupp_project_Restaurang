@@ -1,8 +1,6 @@
 ﻿using RestaurangSystem.Services;
 using RestaurangSystem.UI;
 using Spectre.Console;
-
-
 namespace RestaurangSystem.Models
 {
     public class RestaurantMenu

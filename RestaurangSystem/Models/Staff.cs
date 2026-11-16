@@ -1,8 +1,6 @@
 ﻿using Spectre.Console;
 using System.Text.Json.Serialization;
-
 ﻿using RestaurangSystem.Services;
-using Spectre.Console;
 namespace RestaurangSystem.Models
 {
     public class Staff : Users

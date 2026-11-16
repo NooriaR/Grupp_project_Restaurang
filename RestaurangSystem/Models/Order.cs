@@ -1,6 +1,4 @@
-
 using RestaurangSystem.Services;
-
 namespace RestaurangSystem.Models;
 
 // Representerar en beställning i restaurangen.

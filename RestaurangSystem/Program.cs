@@ -1,6 +1,4 @@
-﻿using RestaurangSystem.Models;
-using RestaurangSystem.Services;
-using RestaurangSystem.UI;
+﻿using RestaurangSystem.Services;
 namespace RestaurangSystem
 {
     internal class Program

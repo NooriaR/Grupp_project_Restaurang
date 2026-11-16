@@ -16,31 +16,39 @@ namespace RestaurangSystem.Services
             DataStore<MenuItem> menuDataStore = new DataStore<MenuItem>();
             menuDataStore.LoadFromJson();
             RestaurantMenu menu = new RestaurantMenu();
-            while (AuthService.currentStaff.IsLoggedIn==true)
+            while (AuthService.currentStaff.IsLoggedIn == true)
             {
                 var choice = MenuHelper.StaffMenu();
-                switch (choice)
+
+                if (choice == StaffMenuChoice.Logout)
                 {
-                    case StaffMenuChoice.AddToMenu:
-                        MenuHelper.RunScreen(() => menu.AddMenuItem(menuDataStore));
-                        break;
-                    case StaffMenuChoice.RemovefromMenu:
-                        MenuHelper.RunScreen(() => menu.RemoveMenuItem(menuDataStore));
-                        break;
-                    case StaffMenuChoice.UpdateitemonMenu:
-                        MenuHelper.RunScreen(() => menu.UppdateMenuItem(menuDataStore));
-                        break;
-                    case StaffMenuChoice.ManageOrders:
-                        MenuHelper.RunScreen(() => ShowOrderMenuLogic());
-                        break;
-                    case StaffMenuChoice.ShowSchedule:
-                        MenuHelper.RunScreen(() => AuthService.currentStaff.WorkingSchedule());
-                        break;
-                    case StaffMenuChoice.Logout:
-                        menuDataStore.SaveToJson();
-                        AuthService.LogOut();
-                        break;
+                    menuDataStore.SaveToJson();
+                    AuthService.LogOut();
+                    continue;
                 }
+                if (choice == StaffMenuChoice.ManageOrders)
+                {
+                    ShowOrderMenuLogic(); // har en egen meny och loop, så ingen paus behövs
+                    continue;
+                }
+                MenuHelper.RunScreen(() =>
+                {
+                    switch (choice)
+                    {
+                        case StaffMenuChoice.AddToMenu:
+                            menu.AddMenuItem(menuDataStore);
+                            break;
+                        case StaffMenuChoice.RemovefromMenu:
+                            menu.RemoveMenuItem(menuDataStore);
+                            break;
+                        case StaffMenuChoice.UpdateitemonMenu:
+                            menu.UppdateMenuItem(menuDataStore);
+                            break;
+                        case StaffMenuChoice.ShowSchedule:
+                            AuthService.currentStaff.WorkingSchedule();
+                            break;
+                    }
+                });
             }
         }
         public static void GuestMenuLogic()
@@ -53,41 +61,45 @@ namespace RestaurangSystem.Services
             Guest guest = new Guest(); // skapar en instans av Guest
             guest.Name = AnsiConsole.Ask<string>("What's your name?"); // frågar användaren efter deras namn och sparar det i guest-objektet
 
-            while (isBrowsing == true)
+            while (isBrowsing)
             {
                 // gör en meny för gästen att välja mellan olika alternativ
                 var choice = MenuHelper.GuestMenu(guest);
-                switch (choice)
+
+                if (choice == GuestMenuChoice.Back)
                 {
-                    //Gö em order för att skapa en beställning
-                    case GuestMenuChoice.CreateOrder:
-                        MenuHelper.RunScreen(() => guest.CreateOrder(menu.MenuItems));
-                        break;
-                    // Visar menyn för gästen
-                    case GuestMenuChoice.ShowMenu:
-                        MenuHelper.RunScreen(() => RestaurantMenu.ShowMenu(menuDataStore));
-                        break;
-
-                    case GuestMenuChoice.ShowOrderStatus:
-                        MenuHelper.RunScreen(() => guest.ShowOrderStatus());
-                        break;
-
-                    case GuestMenuChoice.MakeReservation:
-                        MenuHelper.RunScreen(() => guest.MakeReservation());
-                        break;
-
-                    case GuestMenuChoice.ShowReservation:
-                        MenuHelper.RunScreen(() => guest.ShowReservation());
-                        break;
-                    case GuestMenuChoice.CancelReservation:
-                        MenuHelper.RunScreen(() => guest.CancelReservation());
-                        break;
-                    case GuestMenuChoice.Back:
-                        // Slutar loopen och går tillbaka till startmenyn
-                        menuDataStore.SaveToJson();
-                        isBrowsing = false;
-                        break;
+                    // Slutar loopen och går tillbaka till startmenyn
+                    menuDataStore.SaveToJson();
+                    isBrowsing = false;
+                    continue;
                 }
+
+                MenuHelper.RunScreen(() =>
+                {
+                    switch (choice)
+                    {
+                        // Gör en order för att skapa en beställning
+                        case GuestMenuChoice.CreateOrder:
+                            guest.CreateOrder(menu.MenuItems);
+                            break;
+                        // Visar menyn för gästen
+                        case GuestMenuChoice.ShowMenu:
+                            RestaurantMenu.ShowMenu(menuDataStore);
+                            break;
+                        case GuestMenuChoice.ShowOrderStatus:
+                            guest.ShowOrderStatus();
+                            break;
+                        case GuestMenuChoice.MakeReservation:
+                            guest.MakeReservation();
+                            break;
+                        case GuestMenuChoice.ShowReservation:
+                            guest.ShowReservation();
+                            break;
+                        case GuestMenuChoice.CancelReservation:
+                            guest.CancelReservation();
+                            break;
+                    }
+                });
             }
         }
         public static void LogInAndRegisterMenuLogic(DataStore<Staff> stafflist) // Det här är logiken för inloggnings- och registreringsmenyn, som körs när en personalmedlem vill logga in eller registrera sig

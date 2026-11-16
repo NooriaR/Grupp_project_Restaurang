@@ -142,7 +142,7 @@ namespace RestaurangSystem.Services
 
                     case StartMenuChoice.Exit:
                         // Avsluta programmet.
-                        Console.WriteLine("Avslutar programmet...");
+                        Console.WriteLine("Exiting the program...");
                         isRunning = false;
                         return;
                 }

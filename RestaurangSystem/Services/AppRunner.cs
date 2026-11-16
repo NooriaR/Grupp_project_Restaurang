@@ -37,6 +37,9 @@ namespace RestaurangSystem.Services
                     case StaffMenuChoice.ShowSchedule:
                         AuthService.currentStaff.WorkingSchedule();
                         break;
+                    case StaffMenuChoice.ShowLog:
+                        Logger.ShowLog();
+                        break;
                     case StaffMenuChoice.Logout:
                         menuDataStore.SaveToJson();
                         AuthService.LogOut();

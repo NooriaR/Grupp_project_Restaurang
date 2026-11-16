@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Spectre.Console;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 namespace RestaurangSystem.Services
 {
@@ -59,6 +60,49 @@ namespace RestaurangSystem.Services
                 // så vi börjar om med en tom logg
                 return new List<LogEntry>();
             }
+        }
+        public static void ShowLog() // visar loggen för personalen, senaste händelserna först
+        {
+            var filter = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Show which entries?")
+                    .AddChoices("All", "Info", "Warning", "Error"));
+
+            var entries = Logger.ReadAll()
+                .Where(e => filter == "All" || e.Level.ToString() == filter) // filtrerar på vald nivå
+                .OrderByDescending(e => e.Time)                              // nyast överst
+                .Take(50)                                                    // visar max 50 rader
+                .ToList();
+
+            if (entries.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[yellow]No log entries found.[/]");
+                return;
+            }
+
+            var table = new Table()
+                .Border(TableBorder.Rounded)
+                .AddColumn("Time")
+                .AddColumn("Level")
+                .AddColumn("Message");
+
+            foreach (var e in entries)
+            {
+                var color = e.Level switch // färg efter nivå
+                {
+                    LogLevel.Error => "red",
+                    LogLevel.Warning => "yellow",
+                    _ => "green"
+                };
+
+                table.AddRow(
+                    e.Time.ToString("yyyy-MM-dd HH:mm:ss"),
+                    $"[{color}]{e.Level}[/]",
+                    Markup.Escape(e.Message)); // Escape så att [ ] i texten inte tolkas som markup
+            }
+
+            AnsiConsole.Write(table);
+            AnsiConsole.MarkupLine($"[grey]Showing {entries.Count} entries (newest first).[/]");
         }
 
         // Genvägar så att man kan skriva Logger.Info("...") istället för Logger.Log(...)

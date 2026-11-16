@@ -5,7 +5,6 @@ namespace RestaurangSystem.Services
 {
     public static class AppRunner
     {
-
         public static void Run()
         {
             DataStore<Staff> stafflist = new DataStore<Staff>();
@@ -23,25 +22,24 @@ namespace RestaurangSystem.Services
                 switch (choice)
                 {
                     case StaffMenuChoice.AddToMenu:
-                        menu.AddMenuItem(menuDataStore);
+                        MenuHelper.RunScreen(() => menu.AddMenuItem(menuDataStore));
                         break;
                     case StaffMenuChoice.RemovefromMenu:
-                        menu.RemoveMenuItem(menuDataStore);
+                        MenuHelper.RunScreen(() => menu.RemoveMenuItem(menuDataStore));
                         break;
                     case StaffMenuChoice.UpdateitemonMenu:
-                        menu.UppdateMenuItem(menuDataStore);
+                        MenuHelper.RunScreen(() => menu.UppdateMenuItem(menuDataStore));
                         break;
                     case StaffMenuChoice.ManageOrders:
-                        ShowOrderMenuLogic();
+                        MenuHelper.RunScreen(() => ShowOrderMenuLogic());
                         break;
                     case StaffMenuChoice.ShowSchedule:
-                        AuthService.currentStaff.WorkingSchedule();
+                        MenuHelper.RunScreen(() => AuthService.currentStaff.WorkingSchedule());
                         break;
                     case StaffMenuChoice.Logout:
                         menuDataStore.SaveToJson();
                         AuthService.LogOut();
                         break;
- 
                 }
             }
         }
@@ -63,26 +61,26 @@ namespace RestaurangSystem.Services
                 {
                     //Gö em order för att skapa en beställning
                     case GuestMenuChoice.CreateOrder:
-                        guest.CreateOrder(menu.MenuItems);
+                        MenuHelper.RunScreen(() => guest.CreateOrder(menu.MenuItems));
                         break;
                     // Visar menyn för gästen
                     case GuestMenuChoice.ShowMenu:
-                        RestaurantMenu.ShowMenu(menuDataStore);
+                        MenuHelper.RunScreen(() => RestaurantMenu.ShowMenu(menuDataStore));
                         break;
 
                     case GuestMenuChoice.ShowOrderStatus:
-                        guest.ShowOrderStatus();
+                        MenuHelper.RunScreen(() => guest.ShowOrderStatus());
                         break;
 
                     case GuestMenuChoice.MakeReservation:
-                        guest.MakeReservation();
+                        MenuHelper.RunScreen(() => guest.MakeReservation());
                         break;
 
                     case GuestMenuChoice.ShowReservation:
-                        guest.ShowReservation();
+                        MenuHelper.RunScreen(() => guest.ShowReservation());
                         break;
                     case GuestMenuChoice.CancelReservation:
-                        guest.CancelReservation();
+                        MenuHelper.RunScreen(() => guest.CancelReservation());
                         break;
                     case GuestMenuChoice.Back:
                         // Slutar loopen och går tillbaka till startmenyn
@@ -92,7 +90,6 @@ namespace RestaurangSystem.Services
                 }
             }
         }
-
         public static void LogInAndRegisterMenuLogic(DataStore<Staff> stafflist) // Det här är logiken för inloggnings- och registreringsmenyn, som körs när en personalmedlem vill logga in eller registrera sig
         {
             // Loopa tills användaren väljer att gå tillbaka
@@ -122,7 +119,6 @@ namespace RestaurangSystem.Services
                 }
             }
         }
-
         public static void StartMenuLogic(DataStore<Staff> stafflist) // det här är logiken för startmenyn, som körs när programmet startar
         {
             bool isRunning = true;
@@ -148,7 +144,6 @@ namespace RestaurangSystem.Services
                 }
             }
         }
-
         public static void ShowOrderMenuLogic() // det här är logik för orderhanteringsmenyn, som körs när en personalmedlem vill hantera beställningar
         {
             DataStore<Order> orderDataStore = new DataStore<Order>();
@@ -162,7 +157,7 @@ namespace RestaurangSystem.Services
                 switch (choice)
                 {
                     case "Show orders":
-                        AuthService.currentStaff.ShowOrders();
+                        MenuHelper.RunScreen(() => AuthService.currentStaff.ShowOrders());
                         break;
                     case "Update Order Status":
                         var order = orderDataStore.FindItem(o => o.Id == AnsiConsole.Ask<int>("Enter the order ID to update:"));
@@ -184,4 +179,3 @@ namespace RestaurangSystem.Services
         }
     }
 }
-

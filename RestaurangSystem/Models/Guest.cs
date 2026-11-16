@@ -20,6 +20,7 @@ namespace RestaurangSystem.Models
         {
             {
                 DataStore<Order> orderList = new DataStore<Order>();
+                orderList.LoadFromJson();
                 // ---------- STEG 1: Visa menyn i en tabell ----------
                 var table = new Table();
                 table.AddColumn("Dish");   // rubrik för kolumn 1

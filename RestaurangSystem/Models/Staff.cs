@@ -39,7 +39,8 @@ namespace RestaurangSystem.Models
             foreach (var order in orders)
             {
                 string items = string.Join(", ", order.OrderedItems.Select(i => i.Name));
-                table.AddRow(order.Id.ToString(),  items, $"{order.CalculateSumPrice()} kr", order.Status.ToString());
+                string guests = string.Join("\n", order.Guests.Select(g => Markup.Escape(g.Name)));
+                table.AddRow(order.Id.ToString(), guests, items, $"{order.CalculateSumPrice()} kr", order.Status.ToString());
             }
             AnsiConsole.Write(table);
 

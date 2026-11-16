@@ -51,6 +51,7 @@ namespace RestaurangSystem.Services
             DataStore<MenuItem> menuDataStore = new DataStore<MenuItem>(); // skapar en instans av DataStore för MenuItem
             menuDataStore.LoadFromJson();
             RestaurantMenu menu = new RestaurantMenu(); // skapar en instans av RestaurantMenu
+            menu.MenuItems = menuDataStore.items;
             bool isBrowsing = true; 
             Guest guest = new Guest(); // skapar en instans av Guest
             guest.Name = AnsiConsole.Ask<string>("What's your name?"); // frågar användaren efter deras namn och sparar det i guest-objektet

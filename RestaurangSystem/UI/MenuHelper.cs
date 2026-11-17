@@ -7,6 +7,14 @@ namespace RestaurangSystem.UI
     {
         public static Color Accent = Color.LightSkyBlue1;
 
+        public static void RunScreen(Action screen) // detta kör metoden med dessa metoder också, används genom att skriva MenuHelper.RunScreen(()=> metod )
+        {
+            AnsiConsole.Clear();   // tom skärm innan skärmen ritas
+            ShowLogo();
+            screen();              // kör själva metoden
+            WaitForEnter();        // vänta så att användaren hinner läsa
+        }
+
         public static void ShowLogo()
         {
             // Visar restaurangens namn som stor ASCII-text
@@ -20,13 +28,12 @@ namespace RestaurangSystem.UI
                 new Rule("[grey]A calm place to eat[/]")
                     .RuleStyle(new Style(Accent)));
         }
-
-
         // Metoder
         public static StartMenuChoice StartMenu() // den här metoden visar startmenyn och returnerar det alternativ användaren väljer
         {
 
             AnsiConsole.Clear(); // rensar skärmen så att menyn alltid ritas på en ren skärm
+            ShowLogo();
             AnsiConsole.Write(
                 new Panel("Welcome! Pick an option below.") // rutan med välkomsttexten
                     .Header($"[{Accent.ToMarkup()}]Restauraunt Manager[/]") // rubriken i rutans övre kant, i accentfärgen
@@ -84,10 +91,10 @@ namespace RestaurangSystem.UI
         public static bool LogInMenu(DataStore<Staff> staffList) // den här menyn tar ett datastore-objekt med personal och returnerar true om inloggningen lyckas eller false om den misslyckas
         {
             const int maxAttempts = 3; // en konstant int för hur många försök som är tillåtna
-
             for (int attempt = 1; attempt <= maxAttempts; attempt++) // den här for loopen skriver ut menyn varje gång tills försöken når max antal försök
             {
                 AnsiConsole.Clear();
+                ShowLogo();
 
                 AnsiConsole.Write(
                     new Panel("Please log in to continue")
@@ -128,7 +135,7 @@ namespace RestaurangSystem.UI
                 if (ok) // om inloggningen lyckades skrivs ett meddelande ut och metoden returnerar true
                 {
                     AnsiConsole.MarkupLine($"[green]Welcome back {AuthService.currentStaff.Name}![/]");
-                    Thread.Sleep(600);
+                    WaitForEnter();
                     return true;
                 }
 
@@ -155,6 +162,8 @@ namespace RestaurangSystem.UI
 
         public static string ShowOrderMenu()
         {
+            AnsiConsole.Clear();
+            ShowLogo();
             return AnsiConsole.Prompt(
                      new SelectionPrompt<string>()
                          .Title("[green]Orders - what would you like to do?[/]")
@@ -166,6 +175,7 @@ namespace RestaurangSystem.UI
             var accent = Color.Blue1; // en lokal accentfärg för den här menyn, så att personalmenyn får ett eget utseende
 
             AnsiConsole.Clear(); // rensar skärmen så att menyn alltid ritas på en ren skärm
+            ShowLogo();
             AnsiConsole.Write(
                 new Panel($"Welcome {AuthService.currentStaff.Name}! Pick an option below.") // rutan med välkomsttexten
                     .Header($"[{accent.ToMarkup()}]Restauraunt Manager[/]") // rubriken i rutans övre kant, i accentfärgen
@@ -193,9 +203,9 @@ namespace RestaurangSystem.UI
 
         public static GuestMenuChoice GuestMenu(Guest guest) // den här metoden visar gästmenyn och returnerar det alternativ gästen väljer
         {
-
             // Visa menyn och spara gästens val
             AnsiConsole.Clear(); // rensar skärmen så att menyn alltid ritas på en ren skärm
+            ShowLogo();
             AnsiConsole.Write(
                 new Panel($"Welcome,{guest.Name}! Pick an option below.") // rutan med välkomsttexten
                     .Header($"[{Accent.ToMarkup()}]Restauraunt Manager[/]") // rubriken i rutans övre kant, i accentfärgen
@@ -224,6 +234,7 @@ namespace RestaurangSystem.UI
         public static void ResetPasswordMenu(DataStore<Staff> staffList)
         {
             AnsiConsole.Clear();
+            ShowLogo();
             AnsiConsole.Write(
                 new Panel("Enter your email to reset your password")
                     .Header($"[{Accent.ToMarkup()}]Reset password[/]")
@@ -239,7 +250,7 @@ namespace RestaurangSystem.UI
             if (!AuthService.StartReset(email, staffList, out var code))
             {
                 ShowError("No account with that email.");
-                Thread.Sleep(1500);
+                WaitForEnter();
                 return;
             }
 
@@ -277,7 +288,22 @@ namespace RestaurangSystem.UI
                 ShowError("Wrong reset code.");
             }
 
-            Thread.Sleep(1500);
+            WaitForEnter();
+        }
+        public static void WaitForEnter(string message = "Press [bold]Enter[/] to continue...")
+        {
+            var input = AnsiConsole.Console.Input;
+
+            while (input.IsKeyAvailable()) // kastar bort tangenter som skrevs under tiden
+                input.ReadKey(true);
+
+            AnsiConsole.MarkupLine($"\n[grey]{message}[/]");
+
+            while (input.ReadKey(true)?.Key != ConsoleKey.Enter)
+            {
+                // ignorerar alla andra tangenter tills användaren trycker Enter
+            }
+            AnsiConsole.Clear();
         }
 
         public static void ShowError(string message, string title = "Error") // den här skriver ut ett generellt meddelande som tar en sträng för att skriva vad du vill, och titeln går att ändra

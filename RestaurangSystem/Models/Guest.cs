@@ -106,15 +106,15 @@ namespace RestaurangSystem.Models
             // Kontrollerar om gästen har en reservation.
             if (reservation == null)
             {
-                AnsiConsole.MarkupLine("[red]Du har ingen reservation.[/]");
+                AnsiConsole.MarkupLine("[red]You have no reservation.[/]");
                 return;
             }
 
             // Visar datum och tid för reservationen.
-            AnsiConsole.WriteLine($"Reservationstid: {reservation.time}");
+            AnsiConsole.WriteLine($"Reservation time: {reservation.time}");
 
             // Visar hur många gäster reservationen gäller.
-            AnsiConsole.WriteLine($"Antal gäster: {reservation.GuestAmount}");
+            AnsiConsole.WriteLine($"Number of guests: {reservation.GuestAmount}");
         }
 
         // Visar status för gästens alla beställningar.
@@ -124,7 +124,7 @@ namespace RestaurangSystem.Models
             if (Orderhistory.Count == 0)
             {
                 // Skriver ut ett meddelande om gästen saknar beställningar.
-                AnsiConsole.MarkupLine("[yellow]Du har inga beställningar.[/]");
+                AnsiConsole.MarkupLine("[yellow]You have no orders.[/]");
 
 
                 // Avslutar metoden direkt eftersom det inte finns något mer att visa.
@@ -135,7 +135,7 @@ namespace RestaurangSystem.Models
             foreach (Order order in Orderhistory)
             {
                 // Skriver ut varje beställnings ID och dess aktuella status.
-                AnsiConsole.WriteLine($"Beställning {order.Id}: {order.Status}");
+                AnsiConsole.WriteLine($"Order {order.Id}: {order.Status}");
             }
         }
 
@@ -145,7 +145,7 @@ namespace RestaurangSystem.Models
             // Kontrollerar om gästen har en reservation.
             if (reservation == null)
             {
-                AnsiConsole.MarkupLine("[red]Du har ingen reservation att avboka.[/]");
+                AnsiConsole.MarkupLine("[red]You have no reservation to cancel.[/]");
                 return;
             }
 
@@ -153,7 +153,7 @@ namespace RestaurangSystem.Models
             reservation = null;
 
             // Bekräftar att reservationen har avbokats.
-            AnsiConsole.MarkupLine("[green]Din reservation har avbokats.[/]");
+            AnsiConsole.MarkupLine("[green]Your reservation has been cancelled.[/]");
         }
 
         public void ShowOrderHistory(DataStore<Order> dataStore)

@@ -5,12 +5,13 @@ namespace RestaurangSystem.Models
 {
     public class RestaurantMenu
     {
-        //Attributes
+        // Attribut
         public List<MenuItem> MenuItems = new List<MenuItem>();
-        //Methods
+        // Metoder
+        // Lägger till en ny maträtt i datalagret
         public void AddMenuItem(DataStore<MenuItem> dataStore)
         {
-            
+
             // Skapar ett nytt maträttsobjekt
             MenuItem newItem = MenuItem.CreateMenuItem();
 
@@ -20,14 +21,14 @@ namespace RestaurangSystem.Models
 
             AnsiConsole.WriteLine($"{newItem.Name} har lagts till i menyn!");
         }
-        // Removes a menu item from the data store by its Id
+        // Tar bort en maträtt från datalagret med hjälp av dess 
         public void RemoveMenuItem(DataStore<MenuItem> dataStore)
         {
             try
             {
-                dataStore.GetIds(); // Show the list of items with their Ids
-                                    // Ask the user which item to remove
-                                    // STEP 1: Let the user choose how to search (arrow keys + Enter)
+                dataStore.GetIds(); // Visar listan över maträtter med deras Id
+                                    // Frågar användaren vilken maträtt som ska tas bort
+                                    // STEG 1: Låt användaren välja hur maträtten ska sökas (arrow keys + Enter)
                 var searchBy = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
                         .Title("How do you want to find the item?")
@@ -35,7 +36,7 @@ namespace RestaurangSystem.Models
 
                 MenuItem? item;   // "?" means it can be empty (null) if nothing is found
 
-                // STEP 2: Ask for the id or the name, depending on the choice
+                // STEG 2: Fråga efter id eller namn, beroende på valet
                 if (searchBy == "Id")
                 {
                     int id = AnsiConsole.Ask<int>("Enter the [green]id[/]:");
@@ -44,33 +45,37 @@ namespace RestaurangSystem.Models
                 else
                 {
                     string name = AnsiConsole.Ask<string>("Enter the [green]name[/]:");
-                    // OrdinalIgnoreCase means "pizza" and "Pizza" count as the same
+                    // OrdinalIgnoreCase betyder att "pizza" och "Pizza" räknas som samma
                     item = dataStore.FindItem(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
                 }
 
-                // STEP 3: Stop if nothing was found
+                // STEG 3: Avbryt om ingenting hittadest
                 if (item == null)
                 {
                     AnsiConsole.MarkupLine("[red]No item found.[/]");
                     return;
                 }
-        
 
-                // Ask for confirmation before deleting
+
+                // Frågar om bekräftelse innan borttagning
                 if (!AnsiConsole.Confirm($"Remove [yellow]{Markup.Escape(item.Name)}[/]?"))
                 {
                     AnsiConsole.MarkupLine("[yellow]Removal cancelled.[/]");
                     return;
                 }
 
+                //Tar bort maträtten från listan och bekräftar för användaren
                 dataStore.RemoveItem(item);
+
                 AnsiConsole.MarkupLine("[green]Item removed![/]");
             }
             catch (Exception ex)
             {
+                // Fångar oväntade fel så att programmet inte kraschar
                 AnsiConsole.MarkupLine($"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
             }
         }
+        // Ändrar namn och pris på en maträtt som redan finns i menyn
         public void UppdateMenuItem(DataStore<MenuItem> dataStore)
         {
             try
@@ -80,7 +85,8 @@ namespace RestaurangSystem.Models
                     .Title("How do you want to find the item?")
                     .AddChoices("Id", "Name"));
 
-                MenuItem? item;   // "?" means it can be empty (null) if nothing is found
+                MenuItem? item;   // "?" betyder att den kan vara tom (null) om inget hittas
+                                  // Frågar efter id eller namn, beroende på valet
                 if (searchBy == "Id")
                 {
                     int id = AnsiConsole.Ask<int>("Enter the [green]id[/]:");
@@ -89,17 +95,17 @@ namespace RestaurangSystem.Models
                 else
                 {
                     string name = AnsiConsole.Ask<string>("Enter the [green]name[/]:");
-                    // OrdinalIgnoreCase means "pizza" and "Pizza" count as the same
+                    // OrdinalIgnoreCase betyder att "pizza" och "Pizza" räknas som sammag
                     item = dataStore.FindItem(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
                 }
 
-                // STEP 3: Stop if nothing was found
+                // STEG 3: Avbryt om ingenting hittades
                 if (item == null)
                 {
                     AnsiConsole.MarkupLine("[red]No item found.[/]");
                     return;
                 }
-
+                // Ber användaren skriva in nytt namn och nytt pris
                 item.Name = AnsiConsole.Ask<string>("New name:");
                 item.Price = AnsiConsole.Ask<decimal>("New price:");
 
@@ -110,7 +116,7 @@ namespace RestaurangSystem.Models
                 AnsiConsole.MarkupLine($"[red]Something went wrong: {ex.Message}[/]");
             }
         }
-
+        // Skriver ut alla maträtter sorterade efter pris, billigast först
         public static void SortByPrice(DataStore<MenuItem> dataStore)
         {
             // Sortera från billigast till dyrast
@@ -123,43 +129,50 @@ namespace RestaurangSystem.Models
             }
         }
 
-
+        // Visar en undermeny där gästen kan bläddra bland maträtterna
         public static void ShowMenu(DataStore<MenuItem> menuStore)
         {
+            // Styr om menyn ska fortsätta visas
             bool running = true;
 
             while (running)
             {
+                // Visar valen och sparar vad användaren väljer
                 var choice = AnsiConsole.Prompt(
                         new SelectionPrompt<string>()
                             .Title("[green]What do you want to do?[/]")
                             .AddChoices("Show Menu", "Show Only Vegetarian", "Show By Category", "Sort By Price", "Back"));
-
+                // Utför det användaren valde
                 switch (choice)
                 {
                     case "Show Menu":
+                        // Visar alla maträtter i en tabell
                         MenuHelper.ShowMenuItems(menuStore);
                         break;
 
                     case "Show Only Vegetarian":
+                        // Visar bara de vegetariska maträtterna
                         ShowOnlyVegetarian(menuStore);
                         break;
 
                     case "Show By Category":
+                        // Visar maträtter i en vald kategori
                         ShowByCategory(menuStore);
                         break;
 
                     case "Sort By Price":
+                        // Visar maträtterna sorterade efter pris
                         SortByPrice(menuStore);
                         break;
                     case "Back":
+                        // Avslutar loopen och går tillbaka till föregående meny
                         running = false;
                         break;
                 }
             }
         }
 
-
+        // Skriver ut bara de maträtter som är vegetariska
         public static void ShowOnlyVegetarian(DataStore<MenuItem> dataStore)
         {
             // Välj ut bara de vegetariska rätterna

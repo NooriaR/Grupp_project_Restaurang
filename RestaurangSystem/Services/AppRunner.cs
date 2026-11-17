@@ -172,7 +172,8 @@ namespace RestaurangSystem.Services
                         MenuHelper.RunScreen(() => AuthService.currentStaff.ShowOrders());
                         break;
                     case "Update Order Status":
-                        var order = orderDataStore.FindItem(o => o.Id == AnsiConsole.Ask<int>("Enter the order ID to update:"));
+                        int orderId = AnsiConsole.Ask<int>("Enter the order ID to update:");
+                        var order = orderDataStore.FindItem(o => o.Id == orderId);
                         if (order != null)
                         {
                             var newStatus = AnsiConsole.Prompt(

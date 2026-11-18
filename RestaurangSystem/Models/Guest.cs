@@ -1,5 +1,7 @@
-﻿using RestaurangSystem.Services;
+﻿
+using RestaurangSystem.Services;
 using Spectre.Console;
+
 namespace RestaurangSystem.Models
 {
     public class Guest : Users
@@ -7,170 +9,173 @@ namespace RestaurangSystem.Models
         // Egenskaper (Attributes)
 
         // Sparar en lista över gästens tidigare beställningar.
-        // List<Order> innebär att listan kan innehålla flera beställningar.
-        // new List<Order>() skapar en tom lista när ett nytt Guest-objekt skapas.
         public List<Order> Orderhistory { get; set; } = new List<Order>();
 
         // Sparar gästens reservation.
-        // Reservation är datatypen och reservation är egenskapens namn.
         public Reservation reservation { get; set; }
 
         public void CreateOrder(List<MenuItem> menuItems)
         {
+            DataStore<Order> orderList = new DataStore<Order>();
+            orderList.LoadFromJson();
+
+            // STEG 1: Visa menyn i en tabell
+            var table = new Table();
+            table.AddColumn("Dish");
+            table.AddColumn("Price");
+
+            foreach (var item in menuItems)
             {
-                DataStore<Order> orderList = new DataStore<Order>();
-                orderList.LoadFromJson();
-                // ---------- STEG 1: Visa menyn i en tabell ----------
-                var table = new Table();
-                table.AddColumn("Dish");   // rubrik för kolumn 1
-                table.AddColumn("Price");  // rubrik för kolumn 2
-
-                // Gå igenom alla rätter i menyn och lägg till en rad för varje
-                foreach (var item in menuItems)
-                {
-                    table.AddRow(item.Name, $"{item.Price} kr");
-                }
-
-                AnsiConsole.Write(table);  // rita ut tabellen i terminalen
-
-                // ---------- STEG 2: Skapa en tom lista för gästens beställning ----------
-                var order = new Order();  // skapa en ny Order-objekt som kommer att innehålla gästens valda rätter
-                // ---------- STEG 3: Låt gästen välja rätt för rätt ----------
-                while (true)  // fortsätt fråga tills gästen väljer "Done"
-                {
-                    // Visa en meny där gästen väljer med piltangenterna och Enter
-                    string choice = AnsiConsole.Prompt(
-                        new SelectionPrompt<string>()
-                            .Title("What would you like to order?")
-                            .AddChoices(menuItems.Select(m => m.Name).Append("Done")));
-
-                    // Om gästen väljer "Done" slutar vi fråga
-                    if (choice == "Done")
-                    {
-                        break;
-                    }
-
-                    // Hitta rätten som har samma namn som gästen valde
-                    MenuItem selected = menuItems.First(m => m.Name == choice);
-
-                    // Lägg till rätten i beställningen
-                    order.AddToOrder(selected);
-
-                    AnsiConsole.MarkupLine($"[green]{selected.Name} added to your order.[/]");
-                }
-
-                // ---------- STEG 4: Om gästen inte valde något ----------
-                if (order.OrderedItems.Count == 0)
-                {
-                    AnsiConsole.MarkupLine("[yellow]Your order is empty.[/]");
-                    return;  // avsluta metoden här
-                }
-                orderList.AddItem(order);  // lägg till beställningen i listan över alla beställningar
-                orderList.SaveToJson();  // spara listan till JSON-filen
-                Orderhistory.Add(order);
-
-                // ---------- STEG 5: Visa beställningen i en tabell ----------
-                var summary = new Table();
-                summary.AddColumn("Dish");
-                summary.AddColumn("Price");
-
-                foreach (var item in order.OrderedItems)
-                {
-                    summary.AddRow(item.Name, $"{item.Price} kr");
-                }
-
-                AnsiConsole.Write(summary);
-
-                // ---------- STEG 6: Räkna ut och visa totalpriset ----------
-                var total = order.CalculateSumPrice();  // Sum lägger ihop alla priser
-
-                AnsiConsole.MarkupLine($"[bold]Total: {total} kr[/]");
-                AnsiConsole.MarkupLine("[green]Thank you for your order![/]");
+                table.AddRow(item.Name, $"{item.Price} kr");
             }
-        }
 
+            AnsiConsole.Write(table);
 
-        // Metoder (Methods)
+            // STEG 2: Skapa en ny beställning
+            var order = new Order();
 
-        // Visar information om gästens nuvarande reservation.
-
-        public void MakeReservation()
-        {
-            DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
-            reservation = new Reservation(); // Skapar en ny instans av Reservation-klassen
-            reservation.CreateReservation(reservationDataStore);
-
-        }
-        public void ShowReservation()
-        {
-            // Kontrollerar om gästen har en reservation.
-            if (reservation == null)
+            // STEG 3: Låt gästen välja maträtter
+            while (true)
             {
-                AnsiConsole.MarkupLine("[red]Du har ingen reservation.[/]");
+                string choice = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("What would you like to order?")
+                        .AddChoices(menuItems.Select(m => m.Name).Append("Done")));
+
+                if (choice == "Done")
+                {
+                    break;
+                }
+
+                MenuItem selected = menuItems.First(m => m.Name == choice);
+
+                order.AddToOrder(selected);
+
+                AnsiConsole.MarkupLine($"[green]{selected.Name} added to your order.[/]");
+            }
+
+            // STEG 4: Kontrollera om beställningen är tom
+            if (order.OrderedItems.Count == 0)
+            {
+                AnsiConsole.MarkupLine("[yellow]Your order is empty.[/]");
                 return;
             }
 
-            // Visar datum och tid för reservationen.
-            AnsiConsole.WriteLine($"Reservationstid: {reservation.time}");
+            // STEG 5: Lägg till gäster i beställningen
+            int guestAmount = AnsiConsole.Prompt(
+                new TextPrompt<int>("How many guests are included in this order?")
+                    .DefaultValue(1)
+                    .Validate(amount => amount > 0
+                        ? ValidationResult.Success()
+                        : ValidationResult.Error("At least one guest is required.")));
 
-            // Visar hur många gäster reservationen gäller.
-            AnsiConsole.WriteLine($"Antal gäster: {reservation.GuestAmount}");
+            for (int i = 0; i < guestAmount; i++)
+            {
+                string guestName = AnsiConsole.Prompt(
+                    new TextPrompt<string>($"Enter name for guest {i + 1}:"));
+
+                Guest guest = new Guest
+                {
+                    Name = guestName
+                };
+
+                order.Guests.Add(guest);
+            }
+
+            // STEG 6: Spara beställningen
+            orderList.AddItem(order);
+            orderList.SaveToJson();
+
+            Orderhistory.Add(order);
+
+            // STEG 7: Visa beställningen
+            var summary = new Table();
+            summary.AddColumn("Dish");
+            summary.AddColumn("Price");
+
+            foreach (var item in order.OrderedItems)
+            {
+                summary.AddRow(item.Name, $"{item.Price} kr");
+            }
+
+            AnsiConsole.Write(summary);
+
+            // Visa gästerna i beställningen
+            AnsiConsole.MarkupLine("[bold]Guests:[/]");
+
+            foreach (var guest in order.Guests)
+            {
+                AnsiConsole.MarkupLine($"- {Markup.Escape(guest.Name)}");
+            }
+
+            // STEG 8: Visa totalpriset
+            var total = order.CalculateSumPrice();
+
+            AnsiConsole.MarkupLine($"[bold]Total: {total} kr[/]");
+            AnsiConsole.MarkupLine("[green]Thank you for your order![/]");
+        }
+
+        // Visar information om gästens nuvarande reservation.
+        public void MakeReservation()
+        {
+            DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
+            reservation = new Reservation();
+            reservation.CreateReservation(reservationDataStore);
+        }
+
+        public void ShowReservation()
+        {
+            if (reservation == null)
+            {
+                AnsiConsole.MarkupLine("[red]You have no reservation.[/]");
+                return;
+            }
+
+            AnsiConsole.WriteLine($"Reservation time: {reservation.time}");
+            AnsiConsole.WriteLine($"Number of guests: {reservation.GuestAmount}");
         }
 
         // Visar status för gästens alla beställningar.
         public void ShowOrderStatus()
         {
-            // Kontrollerar om listan med beställningar är tom.
             if (Orderhistory.Count == 0)
             {
-                // Skriver ut ett meddelande om gästen saknar beställningar.
-                AnsiConsole.MarkupLine("[yellow]Du har inga beställningar.[/]");
-
-
-                // Avslutar metoden direkt eftersom det inte finns något mer att visa.
+                AnsiConsole.MarkupLine("[yellow]You have no orders.[/]");
                 return;
             }
 
-            // Loopar igenom alla beställningar i gästens orderhistorik.
             foreach (Order order in Orderhistory)
             {
-                // Skriver ut varje beställnings ID och dess aktuella status.
-                AnsiConsole.WriteLine($"Beställning {order.Id}: {order.Status}");
+                AnsiConsole.WriteLine($"Order {order.Id}: {order.Status}");
             }
         }
 
         // Avbryter gästens reservation.
         public void CancelReservation()
         {
-            // Kontrollerar om gästen har en reservation.
             if (reservation == null)
             {
-                AnsiConsole.MarkupLine("[red]Du har ingen reservation att avboka.[/]");
+                AnsiConsole.MarkupLine("[red]You have no reservation to cancel.[/]");
                 return;
             }
 
-            // Tar bort gästens koppling till reservationen.
             reservation = null;
 
-            // Bekräftar att reservationen har avbokats.
-            AnsiConsole.MarkupLine("[green]Din reservation har avbokats.[/]");
+            AnsiConsole.MarkupLine("[green]Your reservation has been cancelled.[/]");
         }
 
         public void ShowOrderHistory(DataStore<Order> dataStore)
         {
             try
             {
-                // Om det inte finns några beställningar, säg det
                 if (dataStore.items.Count == 0)
                 {
                     AnsiConsole.MarkupLine("[yellow]No orders found.[/]");
                     return;
                 }
 
-                // Sortera så att den senaste beställningen kommer först
                 var orders = dataStore.items.OrderByDescending(o => o.OrderTime);
 
-                // Skapa tabellen
                 var table = new Table();
                 table.AddColumn("Id");
                 table.AddColumn("Time");
@@ -180,7 +185,6 @@ namespace RestaurangSystem.Models
 
                 foreach (var order in orders)
                 {
-                    // Räkna ihop priset för alla rätter i beställningen
                     decimal total = order.OrderedItems.Sum(i => i.Price);
 
                     table.AddRow(
@@ -197,7 +201,7 @@ namespace RestaurangSystem.Models
             {
                 AnsiConsole.MarkupLine($"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
             }
-
         }
     }
 }
+

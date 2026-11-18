@@ -19,7 +19,7 @@ namespace RestaurangSystem.Models
             // Lägger till maträtten i listan
             dataStore.AddItem(newItem);
 
-            AnsiConsole.WriteLine($"{newItem.Name} har lagts till i menyn!");
+            AnsiConsole.WriteLine($"{newItem.Name} has been added to the menu!");
         }
         // Tar bort en maträtt från datalagret med hjälp av dess 
         public void RemoveMenuItem(DataStore<MenuItem> dataStore)
@@ -181,7 +181,7 @@ namespace RestaurangSystem.Models
             // Om inga hittades, säg det
             if (!vegetarian.Any())
             {
-                AnsiConsole.MarkupLine("[yellow]Inga vegetariska rätter hittades.[/]");
+                AnsiConsole.MarkupLine("[yellow]No vegetarian dishes found.[/]");
                 return;
             }
 
@@ -196,7 +196,7 @@ namespace RestaurangSystem.Models
             // Låt användaren välja kategori med pilarna
             var category = AnsiConsole.Prompt(
                 new SelectionPrompt<Category>()
-                    .Title("Välj kategori:")
+                    .Title("Select a category:")
                     .AddChoices(Enum.GetValues<Category>()));
 
             // Välj ut bara rätterna i den kategorin
@@ -205,7 +205,7 @@ namespace RestaurangSystem.Models
             // Om inga hittades, säg det
             if (!items.Any())
             {
-                AnsiConsole.MarkupLine("[yellow]Inga rätter hittades i den kategorin.[/]");
+                AnsiConsole.MarkupLine("[yellow]No dishes found in this category.[/]");
                 return;
             }
 

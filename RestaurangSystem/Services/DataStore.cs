@@ -29,7 +29,7 @@ namespace RestaurangSystem.Services
             }
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine($"[red]Fel vid sökning: {ex.Message}[/]");
+                AnsiConsole.MarkupLine($"[red]Error while searching: {ex.Message}[/]");
                 return default;
             }
         }
@@ -46,19 +46,19 @@ namespace RestaurangSystem.Services
             {
                 string json = JsonSerializer.Serialize(items, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(FilePath, json);
-                AnsiConsole.MarkupLine($"[green]Data sparades till {FilePath}[/]");
+                AnsiConsole.MarkupLine($"[green]Data saved to {FilePath}[/]");
             }
             catch (UnauthorizedAccessException)
             {
-                AnsiConsole.MarkupLine($"[red]Kunde inte spara: saknar behörighet till {FilePath}.[/]");
+                AnsiConsole.MarkupLine($"[red]Could not save: no permission to access {FilePath}.[/]");
             }
             catch (IOException ex)
             {
-                AnsiConsole.MarkupLine($"[red]Kunde inte spara filen:[/] {Markup.Escape(ex.Message)}");
+                AnsiConsole.MarkupLine($"[red]Could not save the file:[/] {Markup.Escape(ex.Message)}");
             }
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine($"[red]Oväntat fel vid sparning:[/] {Markup.Escape(ex.Message)}");
+                AnsiConsole.MarkupLine($"[red]Unexpected error while saving:[/] {Markup.Escape(ex.Message)}");
             }
         }
 
@@ -68,24 +68,24 @@ namespace RestaurangSystem.Services
             {
                 string json = File.ReadAllText(FilePath);
                 items = JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
-                AnsiConsole.MarkupLine($"[green]Läste in {items.Count} objekt från {FilePath}[/]");
+                AnsiConsole.MarkupLine($"[green]Loaded {items.Count} objects from {FilePath}[/]");
             }
             catch (FileNotFoundException)
             {
-                AnsiConsole.MarkupLine("[yellow]Ingen sparad data hittades, startar med tom lista.[/]");
+                AnsiConsole.MarkupLine("[yellow]No saved data found, starting with an empty list.[/]");
             }
             catch (JsonException)
             {
-                AnsiConsole.MarkupLine($"[red]Filen {FilePath} är trasig eller har fel format. Startar med tom lista.[/]");
+                AnsiConsole.MarkupLine($"[red]The file {FilePath} is corrupted or has an invalid format. Starting with an empty list.[/]");
                 items = new List<T>();
             }
             catch (IOException ex)
             {
-                AnsiConsole.MarkupLine($"[red]Kunde inte läsa filen:[/] {Markup.Escape(ex.Message)}");
+                AnsiConsole.MarkupLine($"[red]Could not read the file:[/] {Markup.Escape(ex.Message)}");
             }
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine($"[red]Oväntat fel vid inläsning:[/] {Markup.Escape(ex.Message)}");
+                AnsiConsole.MarkupLine($"[red]Unexpected error while loading:[/] {Markup.Escape(ex.Message)}");
             }
         }
     }

@@ -14,43 +14,41 @@ namespace RestaurangSystem.Models
         {
             try
             {
-                // Hämtar gästens namn
+                // Laddar tidigare reservationer från JSON.
+                dataStore.LoadFromJson();
+
+                // Hämtar gästens namn.
                 string name = AnsiConsole.Ask<string>("Guest name:");
 
-                // Hämtar datum och tid, och stoppar tider som redan har varit
-                DateTime time = AnsiConsole.Prompt(
+                // Hämtar datum och tid och kontrollerar att tiden ligger i framtiden.
+                DateTime reservationTime = AnsiConsole.Prompt(
                     new TextPrompt<DateTime>("Date and time (for example 2026-11-20 18:00):")
                         .Validate(t => t > DateTime.Now
                             ? ValidationResult.Success()
                             : ValidationResult.Error("[red]The time must be in the future[/]")));
 
-                // Hämtar antal personer, minst 1
+                // Hämtar antal personer, minst 1.
                 int numberOfGuests = AnsiConsole.Prompt(
                     new TextPrompt<int>("Number of guests:")
                         .Validate(n => n > 0
                             ? ValidationResult.Success()
                             : ValidationResult.Error("[red]There must be at least 1 guest[/]")));
 
-                // Skapar bokningen
-                Reservation reservation = new Reservation
-                {
-                    guest = new Guest { Name = name },
-                    time = time,
-                    GuestAmount = numberOfGuests
-                };
+                // Sparar informationen i den aktuella reservationen.
+                guest = new Guest { Name = name };
+                time = reservationTime;
+                GuestAmount = numberOfGuests;
 
-                // AddItem sätter Id automatiskt
-                dataStore.AddItem(reservation);
+                // Lägger till reservationen och sparar till JSON.
+                dataStore.AddItem(this);
                 dataStore.SaveToJson();
 
-                AnsiConsole.MarkupLine($"[green]Reservation created for {Markup.Escape(name)}! Id: {reservation.Id}[/]");
+                AnsiConsole.MarkupLine($"[green]Reservation created for {Markup.Escape(name)}! Id: {Id}[/]");
             }
             catch (Exception ex)
             {
                 AnsiConsole.MarkupLine($"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
             }
-
         }
     }
 }
-

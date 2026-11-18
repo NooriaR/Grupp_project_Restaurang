@@ -10,21 +10,27 @@ namespace RestaurangSystem.Models
         //Methods
         public void AddMenuItem(DataStore<MenuItem> dataStore)
         {
-            
-            // Skapar ett nytt maträttsobjekt
+            // Laddar tidigare maträtter från JSON.
+            dataStore.LoadFromJson();
+
+            // Skapar ett nytt maträttsobjekt.
             MenuItem newItem = MenuItem.CreateMenuItem();
 
-
-            // Lägger till maträtten i listan
+            // Lägger till maträtten i listan.
             dataStore.AddItem(newItem);
 
+            // Sparar hela listan till JSON.
+            dataStore.SaveToJson();
+
             AnsiConsole.WriteLine($"{newItem.Name} has been added to the menu!");
+
         }
         // Removes a menu item from the data store by its Id
         public void RemoveMenuItem(DataStore<MenuItem> dataStore)
         {
             try
             {
+                dataStore.LoadFromJson();
                 dataStore.GetIds(); // Show the list of items with their Ids
                                     // Ask the user which item to remove
                                     // STEP 1: Let the user choose how to search (arrow keys + Enter)
@@ -64,6 +70,7 @@ namespace RestaurangSystem.Models
                 }
 
                 dataStore.RemoveItem(item);
+                dataStore.SaveToJson();
                 AnsiConsole.MarkupLine("[green]Item removed![/]");
             }
             catch (Exception ex)
@@ -75,6 +82,7 @@ namespace RestaurangSystem.Models
         {
             try
             {
+                dataStore.LoadFromJson();
                 var searchBy = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("How do you want to find the item?")
@@ -104,6 +112,7 @@ namespace RestaurangSystem.Models
                 item.Price = AnsiConsole.Ask<decimal>("New price:");
 
                 AnsiConsole.MarkupLine("[green]Item updated![/]");
+                dataStore.SaveToJson();
             }
             catch (Exception ex)
             {
@@ -127,7 +136,8 @@ namespace RestaurangSystem.Models
         public static void ShowMenu(DataStore<MenuItem> menuStore)
         {
             bool running = true;
-
+            menuStore.LoadFromJson();
+            
             while (running)
             {
                 var choice = AnsiConsole.Prompt(

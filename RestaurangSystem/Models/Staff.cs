@@ -82,14 +82,14 @@ namespace RestaurangSystem.Models
             // Kontrollerar om personalen är inloggad.
             if (!IsLoggedIn)
             {
-                AnsiConsole.MarkupLine("[red]Du måste vara inloggad för att se arbetsschemat.[/]");
+                AnsiConsole.MarkupLine("[red]You must be logged in to view the work schedule.[/]");
                 return;
             }
 
             // Kontrollerar om det finns några arbetspass.
             if (Schedule.WorkDays.Count == 0)
             {
-                AnsiConsole.MarkupLine("[yellow]Inget arbetsschema finns tillgängligt.[/]");
+                AnsiConsole.MarkupLine("[yellow]No work schedule is available.[/]");
                 return;
             }
 
@@ -97,8 +97,8 @@ namespace RestaurangSystem.Models
             var table = new Table();
 
             // Lägger till rubriker i tabellen.
-            table.AddColumn("Dag");
-            table.AddColumn("Arbetstid");
+            table.AddColumn("Day");
+            table.AddColumn("Working Hours");
 
             // Går igenom alla arbetspass i schemat.
             foreach (string day in Schedule.WorkDays)

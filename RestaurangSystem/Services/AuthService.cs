@@ -55,6 +55,7 @@ namespace RestaurangSystem.Services
                 // hittar en personal med rätt e-post och lösenord
                 currentStaff = staffList.FindItem(item => item.Email == email && item.Password == password);
                 currentStaff.IsLoggedIn = true; // sätter inloggningsstatusen till true
+                Logger.Info($"Log in: {currentStaff.Email}"); // skickar logg
 
                 return currentStaff != null; // returnerar true om currentStaff inte är null
             }

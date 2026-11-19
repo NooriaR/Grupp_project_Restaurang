@@ -200,6 +200,8 @@ namespace RestaurangSystem.Models
             catch (Exception ex)
             {
                 AnsiConsole.MarkupLine($"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
+                Logger.Error($"Error while showing order history: {ex.Message}", ex);
+
             }
         }
     }

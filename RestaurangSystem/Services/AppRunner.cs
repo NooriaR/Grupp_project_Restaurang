@@ -90,9 +90,6 @@ namespace RestaurangSystem.Services
                         case StaffMenuChoice.ShowLog:
                             Logger.ShowLog();
                             break;
-                        case StaffMenuChoice.ShowLog:
-                            Logger.ShowLog();
-                            break;
                         case StaffMenuChoice.ShowSchedule:
                             // Visar arbetsschemat för den personalmedlem
                             // som för tillfället är inloggad.

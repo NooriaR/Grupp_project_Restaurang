@@ -1,7 +1,6 @@
-﻿
+﻿using RestaurangSystem.UI;
 using RestaurangSystem.Services;
 using Spectre.Console;
-
 namespace RestaurangSystem.Models
 {
     public class Guest : Users

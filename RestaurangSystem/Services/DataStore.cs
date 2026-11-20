@@ -51,10 +51,10 @@ namespace RestaurangSystem.Services
         public T? FindItem(Func<T, bool> predicate)
         {
             try
-            {                // FirstOrDefault söker igenom listan och returnerar
-                             // det första objektet som uppfyller villkoret.
-                             // Om inget objekt hittas returneras standardvärdet,
-                             // vilket är null för referenstyper.
+            {   // FirstOrDefault söker igenom listan och returnerar
+                // det första objektet som uppfyller villkoret.
+                // Om inget objekt hittas returneras standardvärdet,
+                // vilket är null för referenstyper.
 
                 return items.FirstOrDefault(predicate);
             }

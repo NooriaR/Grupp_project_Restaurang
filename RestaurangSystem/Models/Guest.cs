@@ -215,23 +215,7 @@ namespace RestaurangSystem.Models
                 reservationDataStore.RemoveItem(savedReservation);
                 reservationDataStore.SaveToJson();
             }
-        }
-
-        // Avbryter gästens reservation.
-        public void CancelReservation()
-        {
-            if (reservation == null)
-            {
-                AnsiConsole.MarkupLine("[red]You have no reservation to cancel.[/]");
-                return;
-            }
-
-            DeleteReservation();
-
-            reservation = null;
-
-            AnsiConsole.MarkupLine("[green]Your reservation has been cancelled.[/]");
-        }
+        }        
 
         // Visar alla sparade beställningar.
         public void ShowOrderHistory(DataStore<Order> dataStore)

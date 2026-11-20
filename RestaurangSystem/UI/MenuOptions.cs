@@ -14,6 +14,7 @@
         UpdateitemonMenu,
         ManageOrders,
         ShowSchedule,
+        ShowLog,
         Logout
 
     }

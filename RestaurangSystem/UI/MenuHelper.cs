@@ -203,6 +203,7 @@ namespace RestaurangSystem.UI
                         StaffMenuChoice.UpdateitemonMenu => "Update item on Menu", // texten som visas för UpdateitemonMenu
                         StaffMenuChoice.ManageOrders => "Manage Orders", // texten som visas för ManageOrders
                         StaffMenuChoice.ShowSchedule => "Show Schedule", // texten som visas för ShowSchedule
+                        StaffMenuChoice.ShowLog => "Show Log", //texten som visas för ShowLog
                         StaffMenuChoice.Logout => "Log out", // texten som visas för Logout
                         _ => choice.ToString() // reservval: visar enum-namnet om något värde saknas ovan
                     })

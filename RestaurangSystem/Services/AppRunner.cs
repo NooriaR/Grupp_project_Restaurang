@@ -72,6 +72,9 @@ namespace RestaurangSystem.Services
                             // om en maträtt som redan finns på menyn.
                             menu.UppdateMenuItem(menuDataStore);
                             break;
+                        case StaffMenuChoice.ShowLog:
+                            Logger.ShowLog();
+                            break;
                         case StaffMenuChoice.ShowSchedule:
                             // Visar arbetsschemat för den personalmedlem
                             // som för tillfället är inloggad.

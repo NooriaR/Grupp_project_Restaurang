@@ -1,6 +1,5 @@
 ﻿
 using RestaurangSystem.Services;
-using RestaurangSystem.UI;
 using Spectre.Console;
 
 namespace RestaurangSystem.Models
@@ -25,9 +24,9 @@ namespace RestaurangSystem.Models
             table.AddColumn("Dish");
             table.AddColumn("Price");
 
-            foreach (var item in menuItems)
+            foreach (var item in menuItems) // Loopar igenom alla maträtter i menyn
             {
-                table.AddRow(item.Name, $"{item.Price} kr");
+                table.AddRow(item.Name, $"{item.Price} kr"); // Lägger till en rad i tabellen med maträttens namn och pris
             }
 
             AnsiConsole.Write(table);
@@ -48,9 +47,9 @@ namespace RestaurangSystem.Models
                     break;
                 }
 
-                MenuItem selected = menuItems.First(m => m.Name == choice);
+                MenuItem selected = menuItems.First(m => m.Name == choice); // Hittar den valda maträtten i listan
 
-                order.AddToOrder(selected);
+                order.AddToOrder(selected); // Lägger till den valda maträtten i beställningen
 
                 AnsiConsole.MarkupLine($"[green]{selected.Name} added to your order.[/]");
             }
@@ -70,17 +69,17 @@ namespace RestaurangSystem.Models
                         ? ValidationResult.Success()
                         : ValidationResult.Error("At least one guest is required.")));
 
-            for (int i = 0; i < guestAmount; i++)
+            for (int i = 0; i < guestAmount; i++) // Loopar för att lägga till varje gäst
             {
-                string guestName = AnsiConsole.Prompt(
-                    new TextPrompt<string>($"Enter name for guest {i + 1}:"));
+                string guestName = AnsiConsole.Prompt( 
+                    new TextPrompt<string>($"Enter name for guest {i + 1}:")); // Frågar efter gästens namn
 
-                Guest guest = new Guest
+                Guest guest = new Guest // Skapar ett nytt Guest-objekt med det angivna namnet
                 {
                     Name = guestName
                 };
 
-                order.Guests.Add(guest);
+                order.Guests.Add(guest); // Lägger till gästen i beställningen
             }
 
             // STEG 6: Spara beställningen
@@ -124,6 +123,7 @@ namespace RestaurangSystem.Models
             reservation.CreateReservation(reservationDataStore);
         }
 
+        // Visar information om gästens bokning: tid och antal personer
         public void ShowReservation()
         {
             // Om gästen inte har någon bokning visas ett felmeddelande och metoden avslutas
@@ -252,5 +252,6 @@ namespace RestaurangSystem.Models
             }
         }
     }
+    
 }
 

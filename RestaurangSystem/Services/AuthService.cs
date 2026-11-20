@@ -17,7 +17,7 @@ namespace RestaurangSystem.Services
             code = "";
             resetStaff = staffList.FindItem(s => s.Email.Equals(email.Trim(), StringComparison.OrdinalIgnoreCase));
 
-            if (resetStaff == null) return false;
+            if (resetStaff == null) return false; // om ingen personal hittas med den angivna e-postadressen returneras false
 
             resetCode = Random.Shared.Next(100000, 1000000).ToString(); // sexsiffrig kod
             code = resetCode;

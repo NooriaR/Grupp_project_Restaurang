@@ -55,7 +55,7 @@ namespace RestaurangSystem.Models
                 // Markup.Escape skyddar mot tecken i namnet som kan förstöra färgkoderna
                 AnsiConsole.MarkupLine($"[green]Reservation created for {Markup.Escape(name)}! Id: {reservation.Id}[/]");
             }
-            catch (Exception ex)
+            catch (Exception ex) // Fångar eventuella fel som kan uppstå under skapandet av bokningen
             {
                 // Visar ett tydligt felmeddelande för användaren
                 MenuHelper.ShowError("An unexpected error occurred while creating the reservation.");

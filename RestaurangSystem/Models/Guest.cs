@@ -247,7 +247,8 @@ namespace RestaurangSystem.Models
             {
                 // Visar felet i rött för användaren
                 // Markup.Escape skyddar mot tecken i felmeddelandet som kan förstöra färgkoderna
-                AnsiConsole.MarkupLine($"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
+                MenuHelper.ShowError("An unexpected error occurred while fetching the order history.");
+
             }
         }
     }

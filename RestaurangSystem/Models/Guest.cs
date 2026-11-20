@@ -7,14 +7,13 @@ namespace RestaurangSystem.Models
 {
     public class Guest : Users
     {
-        // Egenskaper (Attributes)
-
-        // Sparar en lista över gästens tidigare beställningar.
+        // Sparar gästens tidigare beställningar.
         public List<Order> Orderhistory { get; set; } = new List<Order>();
 
         // Sparar gästens reservation.
         public Reservation? reservation { get; set; }
 
+        // Skapar en ny beställning.
         public void CreateOrder(List<MenuItem> menuItems)
         {
             DataStore<Order> orderList = new DataStore<Order>();
@@ -116,14 +115,29 @@ namespace RestaurangSystem.Models
             AnsiConsole.MarkupLine("[green]Thank you for your order![/]");
         }
 
-        // Visar information om gästens nuvarande reservation.
+        // Skapar en ny reservation.
         public void MakeReservation()
         {
             DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
+
             reservation = new Reservation();
             reservation.CreateReservation(reservationDataStore);
         }
 
+        // Hämtar gästens reservation från JSON.
+        public void LoadReservation()
+        {
+            DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
+            reservationDataStore.LoadFromJson();
+
+            reservation = reservationDataStore.FindItem(
+                r => string.Equals(
+                    r.guest?.Name,
+                    Name,
+                    StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Visar gästens reservation.
         public void ShowReservation()
         {
             if (reservation == null)
@@ -136,16 +150,19 @@ namespace RestaurangSystem.Models
             AnsiConsole.WriteLine($"Number of guests: {reservation.GuestAmount}");
         }
 
-        // Visar status för gästens alla beställningar.
+        // Visar status för beställningar.
         public void ShowOrderStatus()
         {
-            if (Orderhistory.Count == 0)
+            DataStore<Order> orderDataStore = new DataStore<Order>();
+            orderDataStore.LoadFromJson();
+
+            if (orderDataStore.items.Count == 0)
             {
                 AnsiConsole.MarkupLine("[yellow]You have no orders.[/]");
                 return;
             }
 
-            foreach (Order order in Orderhistory)
+            foreach (Order order in orderDataStore.items)
             {
                 AnsiConsole.WriteLine($"Order {order.Id}: {order.Status}");
             }
@@ -181,27 +198,40 @@ namespace RestaurangSystem.Models
         // Avbryter gästens reservation.
         public void CancelReservation()
         {
+            DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
+
+            reservationDataStore.LoadFromJson();
+
             if (reservation == null)
             {
-                AnsiConsole.MarkupLine("[red]You have no reservation to cancel.[/]");
                 return;
             }
 
-            reservation = null;
+            Reservation? savedReservation = reservationDataStore.FindItem(
+                r => r.Id == reservation.Id);
 
-            AnsiConsole.MarkupLine("[green]Your reservation has been cancelled.[/]");
-        }
+            if (savedReservation != null)
+            {
+                reservationDataStore.RemoveItem(savedReservation);
+                reservationDataStore.SaveToJson();
+            }
+        }        
 
+        // Visar alla sparade beställningar.
         public void ShowOrderHistory(DataStore<Order> dataStore)
         {
             try
             {
+                // Laddar beställningar från JSON.
+                dataStore.LoadFromJson();
+
                 if (dataStore.items.Count == 0)
                 {
                     AnsiConsole.MarkupLine("[yellow]No orders found.[/]");
                     return;
                 }
 
+                // Sorterar så att den senaste beställningen visas först.
                 var orders = dataStore.items.OrderByDescending(o => o.OrderTime);
 
                 var table = new Table();

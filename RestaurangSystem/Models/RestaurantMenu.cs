@@ -11,30 +11,36 @@ namespace RestaurangSystem.Models
         // Lägger till en ny maträtt i datalagret
         public void AddMenuItem(DataStore<MenuItem> dataStore)
         {
+            // Laddar tidigare maträtter från JSON.
+            dataStore.LoadFromJson();
 
-            // Skapar ett nytt maträttsobjekt
+            // Skapar ett nytt maträttsobjekt.
             MenuItem newItem = MenuItem.CreateMenuItem();
 
-
-            // Lägger till maträtten i listan
+            // Lägger till maträtten i listan.
             dataStore.AddItem(newItem);
 
+            // Sparar hela listan till JSON.
+            dataStore.SaveToJson();
+
             AnsiConsole.WriteLine($"{newItem.Name} has been added to the menu!");
+
         }
         // Tar bort en maträtt från datalagret med hjälp av dess 
         public void RemoveMenuItem(DataStore<MenuItem> dataStore)
         {
             try
             {
-                dataStore.GetIds(); // Visar listan över maträtter med deras Id
-                                    // Frågar användaren vilken maträtt som ska tas bort
-                                    // STEG 1: Låt användaren välja hur maträtten ska sökas (arrow keys + Enter)
+                dataStore.LoadFromJson();
+                dataStore.GetIds(); // Visar listan med objekt och deras Id
+                                    // Frågar användaren vilket objekt som ska tas bort
+                                    // STEG 1: Låt användaren välja hur den vill söka (piltangenter + Enter)
                 var searchBy = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
                         .Title("How do you want to find the item?")
                         .AddChoices("Id", "Name"));
 
-                MenuItem? item;   // "?" means it can be empty (null) if nothing is found
+                MenuItem? item;   // "?" betyder att den kan vara tom (null) om inget hittas
 
                 // STEG 2: Fråga efter id eller namn, beroende på valet
                 if (searchBy == "Id")
@@ -66,7 +72,7 @@ namespace RestaurangSystem.Models
 
                 //Tar bort maträtten från listan och bekräftar för användaren
                 dataStore.RemoveItem(item);
-
+                dataStore.SaveToJson();
                 AnsiConsole.MarkupLine("[green]Item removed![/]");
             }
             catch (Exception ex)
@@ -81,6 +87,7 @@ namespace RestaurangSystem.Models
         {
             try
             {
+                dataStore.LoadFromJson();
                 var searchBy = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("How do you want to find the item?")
@@ -111,6 +118,7 @@ namespace RestaurangSystem.Models
                 item.Price = AnsiConsole.Ask<decimal>("New price:");
 
                 AnsiConsole.MarkupLine("[green]Item updated![/]");
+                dataStore.SaveToJson();
             }
             catch (Exception ex)
             {
@@ -136,7 +144,8 @@ namespace RestaurangSystem.Models
         {
             // Styr om menyn ska fortsätta visas
             bool running = true;
-
+            menuStore.LoadFromJson();
+            
             while (running)
             {
                 // Visar valen och sparar vad användaren väljer

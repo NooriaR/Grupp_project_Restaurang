@@ -63,28 +63,31 @@ namespace RestaurangSystem.UI
                 .Title("[green]What do you want to do?[/]") // frågan som visas ovanför valen, i grönt
                 .AddChoices("Log In", "Register", "Back")); // de tre valen som användaren kan välja mellan
         }
-
+        // Visar alla maträtter och deras information i en tabell.
         public static void ShowMenuItems(DataStore<MenuItem> dataStore)
         {
+            // Visar alla maträtter och deras information i en tabell.
             if (dataStore.items.Count == 0)
             {
                 AnsiConsole.MarkupLine("[yellow]The menu is empty.[/]");
-                return;
+                return;  // Avslutar metoden om det inte finns några maträtter.
             }
-
+            // Skapar en ny tabell för att visa maträtternas information.
             var table = new Table();
+            // Lägger till kolumner för maträttens ID, namn och pris.
             table.AddColumn("Id");
             table.AddColumn("Name");
             table.AddColumn("Price");
-
+            // Går igenom alla maträtter i listan.
             foreach (var item in dataStore.items)
             {
+                // Lägger till maträttens information som en ny rad i tabellen.
                 table.AddRow(
                     item.Id.ToString(),
                     item.Name,
-                    $"{item.Price:F2} kr");
+                    $"{item.Price:F2} kr"); // Visar priset med två decimaler
             }
-
+            // Skriver ut tabellen på skärmen.
             AnsiConsole.Write(table);
         }
 
@@ -159,14 +162,16 @@ namespace RestaurangSystem.UI
 
             return false; // returnerar false om for loopen misslyckas
         }
-
+        // Visar ordermenyn och returnerar det alternativ som användaren väljer.
         public static string ShowOrderMenu()
         {
             AnsiConsole.Clear();
             ShowLogo();
             return AnsiConsole.Prompt(
+                     // Skapar en meny där användaren kan välja ett alternativ.
                      new SelectionPrompt<string>()
                          .Title("[green]Orders - what would you like to do?[/]")
+                         // Lägger till alternativen för att visa ordrar, uppdatera orderstatus eller gå tillbaka.
                          .AddChoices("Show orders", "Update Order Status", "Back"));
         }
 
@@ -195,6 +200,7 @@ namespace RestaurangSystem.UI
                         StaffMenuChoice.UpdateitemonMenu => "Update item on Menu", // texten som visas för UpdateitemonMenu
                         StaffMenuChoice.ManageOrders => "Manage Orders", // texten som visas för ManageOrders
                         StaffMenuChoice.ShowSchedule => "Show Schedule", // texten som visas för ShowSchedule
+                        StaffMenuChoice.ShowLog => "Show Log", //texten som visas för ShowLog
                         StaffMenuChoice.Logout => "Log out", // texten som visas för Logout
                         _ => choice.ToString() // reservval: visar enum-namnet om något värde saknas ovan
                     })
@@ -231,26 +237,33 @@ namespace RestaurangSystem.UI
                     })
                     .AddChoices(Enum.GetValues<GuestMenuChoice>())); // lägger in alla värden i enumen som val, så nya värden dyker upp automatiskt
         }
+        // Visar menyn för att återställa personalens lösenord.
         public static void ResetPasswordMenu(DataStore<Staff> staffList)
         {
+            // Rensar konsolen innan återställningsmenyn visas.
             AnsiConsole.Clear();
+           // Visar loggan överst i menyn
             ShowLogo();
+              // Visar en ruta med information om hur lösenordet återställs.
             AnsiConsole.Write(
                 new Panel("Enter your email to reset your password")
                     .Header($"[{Accent.ToMarkup()}]Reset password[/]")
                     .Border(BoxBorder.Rounded)
                     .BorderColor(Accent));
-
+            // Ber användaren att ange sin e-postadress och kontrollerar att formatet är giltigt.
             var email = AnsiConsole.Prompt(
                 new TextPrompt<string>("[bold]Email[/]:")
                     .Validate(e => AuthService.IsValidEmail(e)
                         ? ValidationResult.Success()
                         : ValidationResult.Error("Enter a valid email")));
-
+            // Försöker starta lösenordsåterställningen för det angivna e-postkontot.
             if (!AuthService.StartReset(email, staffList, out var code))
             {
+                // Visar ett felmeddelande om inget konto hittas med den angivna e-postadressen.
                 ShowError("No account with that email.");
+               // Väntar tills användaren trycker Enter
                 WaitForEnter();
+               // Avslutar metoden om återställningen inte kunde startas.
                 return;
             }
 
@@ -260,34 +273,38 @@ namespace RestaurangSystem.UI
                     .Header("Simulated email")
                     .Border(BoxBorder.Rounded)
                     .BorderColor(Color.Grey));
-
+            // Ber användaren att ange återställningskoden.
             var enteredCode = AnsiConsole.Prompt(new TextPrompt<string>("[bold]Reset code[/]:"));
-
+            // Ber användaren att ange ett nytt lösenord och kontrollerar att det är minst 6 tecken långt.
             var newPassword = AnsiConsole.Prompt(
                 new TextPrompt<string>("[bold]New password[/]:")
                     .Secret()
                     .Validate(p => p.Length >= 6
                         ? ValidationResult.Success()
                         : ValidationResult.Error("At least 6 characters")));
-
+            // Ber användaren att bekräfta det nya lösenordet och kontrollerar att det stämmer.
             AnsiConsole.Prompt(
                 new TextPrompt<string>("[bold]Confirm password[/]:")
                     .Secret()
                     .Validate(p => p == newPassword
                         ? ValidationResult.Success()
                         : ValidationResult.Error(("Passwords don't match"))));
-
+            // Kontrollerar återställningskoden och försöker spara det nya lösenordet.
             if (AuthService.CompleteReset(enteredCode, newPassword, staffList))
             {
+                // Loggar att lösenordet har återställts.
                 Logger.Info($"Password reset for {email}");
+                // Meddelar användaren att lösenordet har uppdaterats.
                 AnsiConsole.MarkupLine("[green]Password updated. You can log in now.[/]");
             }
             else
             {
+                // Loggar att lösenordsåterställningen misslyckades.
                 Logger.Warning($"Failed password reset for {email}");
+                // Visar ett felmeddelande om återställningskoden är felaktig. 
                 ShowError("Wrong reset code.");
             }
-
+          // Väntar tills användaren trycker Enter
             WaitForEnter();
         }
         public static void WaitForEnter(string message = "Press [bold]Enter[/] to continue...")

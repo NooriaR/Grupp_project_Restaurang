@@ -1,5 +1,6 @@
 ﻿
 using RestaurangSystem.Services;
+using RestaurangSystem.UI;
 using Spectre.Console;
 
 namespace RestaurangSystem.Models
@@ -10,7 +11,7 @@ namespace RestaurangSystem.Models
         public List<Order> Orderhistory { get; set; } = new List<Order>();
 
         // Sparar gästens reservation.
-        public Reservation reservation { get; set; }
+        public Reservation? reservation { get; set; }
 
         // Skapar en ny beställning.
         public void CreateOrder(List<MenuItem> menuItems)
@@ -18,7 +19,7 @@ namespace RestaurangSystem.Models
             DataStore<Order> orderList = new DataStore<Order>();
             orderList.LoadFromJson();
 
-            // Visar menyn i en tabell.
+            // STEG 1: Visa menyn i en tabell
             var table = new Table();
             table.AddColumn("Dish");
             table.AddColumn("Price");
@@ -30,10 +31,10 @@ namespace RestaurangSystem.Models
 
             AnsiConsole.Write(table);
 
-            // Skapar en ny beställning.
+            // STEG 2: Skapa en ny beställning
             var order = new Order();
 
-            // Låter gästen välja maträtter.
+            // STEG 3: Låt gästen välja maträtter
             while (true)
             {
                 string choice = AnsiConsole.Prompt(
@@ -53,20 +54,41 @@ namespace RestaurangSystem.Models
                 AnsiConsole.MarkupLine($"[green]{selected.Name} added to your order.[/]");
             }
 
-            // Kontrollerar att beställningen inte är tom.
+            // STEG 4: Kontrollera om beställningen är tom
             if (order.OrderedItems.Count == 0)
             {
                 AnsiConsole.MarkupLine("[yellow]Your order is empty.[/]");
                 return;
             }
 
-            // Lägger till beställningen och sparar till JSON.
+            // STEG 5: Lägg till gäster i beställningen
+            int guestAmount = AnsiConsole.Prompt(
+                new TextPrompt<int>("How many guests are included in this order?")
+                    .DefaultValue(1)
+                    .Validate(amount => amount > 0
+                        ? ValidationResult.Success()
+                        : ValidationResult.Error("At least one guest is required.")));
+
+            for (int i = 0; i < guestAmount; i++)
+            {
+                string guestName = AnsiConsole.Prompt(
+                    new TextPrompt<string>($"Enter name for guest {i + 1}:"));
+
+                Guest guest = new Guest
+                {
+                    Name = guestName
+                };
+
+                order.Guests.Add(guest);
+            }
+
+            // STEG 6: Spara beställningen
             orderList.AddItem(order);
             orderList.SaveToJson();
 
             Orderhistory.Add(order);
 
-            // Visar beställningen.
+            // STEG 7: Visa beställningen
             var summary = new Table();
             summary.AddColumn("Dish");
             summary.AddColumn("Price");
@@ -78,7 +100,15 @@ namespace RestaurangSystem.Models
 
             AnsiConsole.Write(summary);
 
-            // Räknar ut totalpriset.
+            // Visa gästerna i beställningen
+            AnsiConsole.MarkupLine("[bold]Guests:[/]");
+
+            foreach (var guest in order.Guests)
+            {
+                AnsiConsole.MarkupLine($"- {Markup.Escape(guest.Name)}");
+            }
+
+            // STEG 8: Visa totalpriset
             var total = order.CalculateSumPrice();
 
             AnsiConsole.MarkupLine($"[bold]Total: {total} kr[/]");
@@ -137,7 +167,34 @@ namespace RestaurangSystem.Models
                 AnsiConsole.WriteLine($"Order {order.Id}: {order.Status}");
             }
         }
+        // Tar bort gästens reservation från datalagret.
+        public void DeleteReservation()
+        {
+            // Skapar ett DataStore-objekt för att hantera reservationer.
+            DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
 
+            // Hämtar sparade reservationer från JSON-filen.
+            reservationDataStore.LoadFromJson();
+
+            // Kontrollera att gästen har en reservation innan vi använder dess ID.
+            if (reservation == null)
+            {
+                return;
+            }
+
+            // Söker efter reservationen med hjälp av dess unika ID.
+            Reservation? savedReservation = reservationDataStore.FindItem(r => r.Id == reservation.Id);
+
+            // Kontrollerar om reservationen hittades i datalagret.
+            if (savedReservation != null)
+            {
+                // Tar bort reservationen från datalagret.
+                reservationDataStore.RemoveItem(savedReservation);
+
+                // Sparar ändringarna i JSON-filen så att reservationen inte finns kvar.
+                reservationDataStore.SaveToJson();
+            }
+        }
         // Avbryter gästens reservation.
         public void CancelReservation()
         {
@@ -210,9 +267,10 @@ namespace RestaurangSystem.Models
             }
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine(
-                    $"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
+                Logger.Error($"Error while showing order history: {ex.Message}", ex);
+                MenuHelper.ShowError("An unexpected error occurred while fetching the order history.");
             }
         }
     }
 }
+

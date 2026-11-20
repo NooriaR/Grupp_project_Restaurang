@@ -54,13 +54,19 @@ namespace RestaurangSystem.Services
                 }
                 // hittar en personal med rätt e-post och lösenord
                 currentStaff = staffList.FindItem(item => item.Email == email && item.Password == password);
+                if (currentStaff == null)
+                {
+                    return false;
+                }
                 currentStaff.IsLoggedIn = true; // sätter inloggningsstatusen till true
+                Logger.Info($"Log in: {currentStaff.Email}"); // skickar logg
 
                 return currentStaff != null; // returnerar true om currentStaff inte är null
             }
+
             catch (Exception ex)
             {
-                MenuHelper.ShowError("Wrong Email or Password");
+                MenuHelper.ShowError($"An unexpected error occurred while logging in: {ex.Message}");
                 return false;
             }
 

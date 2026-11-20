@@ -120,3 +120,15 @@ This project was developed as a group assignment during the System Developer .NE
 ## Version Control
 
 The project uses Git and GitHub for collaboration, including feature branches, pull requests, and code reviews.
+
+
+## Unit Tests
+
+The project uses xUnit to test the application's functionality.
+
+To run the tests, use the following command:
+
+```bash
+dotnet test
+```
+

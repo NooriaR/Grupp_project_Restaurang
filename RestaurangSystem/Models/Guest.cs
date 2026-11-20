@@ -149,7 +149,7 @@ namespace RestaurangSystem.Models
             AnsiConsole.WriteLine($"Number of guests: {reservation.GuestAmount}");
         }
 
-        // Visar status för beställningar.
+        // Visar status för alla gästers beställningar.
         public void ShowOrderStatus()
         {
             DataStore<Order> orderDataStore = new DataStore<Order>();

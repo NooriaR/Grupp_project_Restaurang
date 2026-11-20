@@ -198,29 +198,35 @@ namespace RestaurangSystem.Models
         // Avbryter gästens reservation.
         public void CancelReservation()
         {
+            DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
+
+            reservationDataStore.LoadFromJson();
+
+            if (reservation == null)
+            {
+                return;
+            }
+
+            Reservation? savedReservation = reservationDataStore.FindItem(
+                r => r.Id == reservation.Id);
+
+            if (savedReservation != null)
+            {
+                reservationDataStore.RemoveItem(savedReservation);
+                reservationDataStore.SaveToJson();
+            }
+        }
+
+        // Avbryter gästens reservation.
+        public void CancelReservation()
+        {
             if (reservation == null)
             {
                 AnsiConsole.MarkupLine("[red]You have no reservation to cancel.[/]");
                 return;
             }
 
-            // Laddar alla sparade reservationer.
-            DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
-            reservationDataStore.LoadFromJson();
-
-            // Hittar reservationen med samma ID.
-            Reservation? savedReservation = reservationDataStore.FindItem(
-                r => r.Id == reservation.Id);
-
-            if (savedReservation == null)
-            {
-                AnsiConsole.MarkupLine("[red]Reservation could not be found.[/]");
-                return;
-            }
-
-            // Tar bort reservationen och sparar ändringen.
-            reservationDataStore.RemoveItem(savedReservation);
-            reservationDataStore.SaveToJson();
+            DeleteReservation();
 
             reservation = null;
 

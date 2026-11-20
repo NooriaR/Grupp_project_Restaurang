@@ -245,8 +245,8 @@ namespace RestaurangSystem.Models
             }
             catch (Exception ex)
             {
+                Logger.Error($"Error while showing order history: {ex.Message}", ex);
                 // Visar felet i rött för användaren
-                // Markup.Escape skyddar mot tecken i felmeddelandet som kan förstöra färgkoderna
                 MenuHelper.ShowError("An unexpected error occurred while fetching the order history.");
 
             }

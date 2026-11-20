@@ -7,9 +7,13 @@ namespace RestaurangSystem.Services
     {
         public static void Run()
         {
+
+        
             try
             {
-                // Skapar en instans av DataStore för Staff och laddar personaldata från JSON-filen
+                //objekt som heter stafflist skapas i datastore
+                //stafflist hämtar data från json
+                //I metoden startMenuLogic används startlist
                 DataStore<Staff> stafflist = new DataStore<Staff>();
                 stafflist.LoadFromJson();
                 Logger.Info($"App Started Succesfully"); // skickar logg

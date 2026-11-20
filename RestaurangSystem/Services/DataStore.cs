@@ -67,6 +67,7 @@ namespace RestaurangSystem.Services
 
                 // Returnerar standardvärdet om ett fel uppstår.
                 MenuHelper.ShowError("Error while searching");
+                Logger.Error($"Error while searching for item: {ex.Message}", ex);
                 return default;
             }
         }
@@ -155,6 +156,7 @@ namespace RestaurangSystem.Services
                 Logger.Warning($"JsonException while loading from {FilePath}");
                 MenuHelper.ShowError("The file is corrupted or has an invalid format. Starting with an empty list.");
                 // Skapar en ny tom lista eftersom informationen inte kunde läsas.
+                Logger.Warning($"JsonException while loading from {FilePath}");
                 MenuHelper.ShowError("The file is corrupted or has an invalid format. Starting with an empty list.");
                 items = new List<T>();
             }

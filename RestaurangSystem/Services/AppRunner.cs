@@ -44,6 +44,9 @@ namespace RestaurangSystem.Services
                         case StaffMenuChoice.UpdateitemonMenu:
                             menu.UppdateMenuItem(menuDataStore);
                             break;
+                        case StaffMenuChoice.ShowLog:
+                            Logger.ShowLog();
+                            break;
                         case StaffMenuChoice.ShowSchedule:
                             AuthService.currentStaff.WorkingSchedule();
                             break;

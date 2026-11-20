@@ -1,5 +1,6 @@
 ﻿using RestaurangSystem.Services;
 using Spectre.Console;
+using RestaurangSystem.UI;
 namespace RestaurangSystem.Models
 {
     public class Reservation : IIdentify
@@ -47,7 +48,7 @@ namespace RestaurangSystem.Models
             }
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine($"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
+                MenuHelper.ShowError("An unexpected error occurred while creating the reservation.");
                 Logger.Error($"Error while creating reservation: {ex.Message}", ex);
             }
 

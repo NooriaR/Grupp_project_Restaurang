@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using RestaurangSystem.UI;
+using Spectre.Console;
 using System.Text.Json;
 namespace RestaurangSystem.Services
 {
@@ -29,7 +30,7 @@ namespace RestaurangSystem.Services
             }
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine($"[red]Error while searching: {ex.Message}[/]");
+                MenuHelper.ShowError("Error while searching");
                 Logger.Error($"Error while searching for item: {ex.Message}", ex);
                 return default;
             }
@@ -51,18 +52,18 @@ namespace RestaurangSystem.Services
             }
             catch (UnauthorizedAccessException)
             {
-                AnsiConsole.MarkupLine($"[red]Could not save: no permission to access {FilePath}.[/]");
+                MenuHelper.ShowError("You do not have permission to access this file.");
                 Logger.Error($"UnauthorizedAccessException while saving to {FilePath}");
             }
             catch (IOException ex)
             {
-                AnsiConsole.MarkupLine($"[red]Could not save the file:[/] {Markup.Escape(ex.Message)}");
+                MenuHelper.ShowError("Could not save the file.");
                 Logger.Error($"IOException while saving to {FilePath}", ex);
             }
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine($"[red]Unexpected error while saving:[/] {Markup.Escape(ex.Message)}");
                 Logger.Error($"Unexpected error while saving to {FilePath}", ex);
+                MenuHelper.ShowError("An unexpected error occurred while saving.");
             }
         }
 
@@ -76,24 +77,24 @@ namespace RestaurangSystem.Services
             }
             catch (FileNotFoundException)
             {
-                AnsiConsole.MarkupLine("[yellow]No saved data found, starting with an empty list.[/]");
                 Logger.Warning($"No saved data found for {FilePath}");
+                MenuHelper.ShowError("No saved data found, starting with an empty list.");
             }
             catch (JsonException)
             {
-                AnsiConsole.MarkupLine($"[red]The file {FilePath} is corrupted or has an invalid format. Starting with an empty list.[/]");
                 Logger.Warning($"JsonException while loading from {FilePath}");
+                MenuHelper.ShowError("The file is corrupted or has an invalid format. Starting with an empty list.");
                 items = new List<T>();
             }
             catch (IOException ex)
             {
-                AnsiConsole.MarkupLine($"[red]Could not read the file:[/] {Markup.Escape(ex.Message)}");
                 Logger.Error($"IOException while loading from {FilePath}", ex);
+                MenuHelper.ShowError("Could not read the file.");
             }
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine($"[red]Unexpected error while loading:[/] {Markup.Escape(ex.Message)}");
                 Logger.Error($"Unexpected error while loading from {FilePath}", ex);
+                MenuHelper.ShowError("An unexpected error occurred while loading.");
             }
         }
     }

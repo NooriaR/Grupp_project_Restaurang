@@ -58,6 +58,9 @@ namespace RestaurangSystem.Services
                             menu.UppdateMenuItem(menuDataStore);
                             Logger.Info($"MenuItem updated by: {AuthService.currentStaff.Email}");
                             break;
+                        case StaffMenuChoice.ShowLog:
+                            Logger.ShowLog();
+                            break;
                         case StaffMenuChoice.ShowSchedule:
                             AuthService.currentStaff.WorkingSchedule();
                             break;

@@ -6,8 +6,11 @@ namespace RestaurangSystem.UI
     public static class MenuHelper
     {
         public static Color Accent = Color.LightSkyBlue1;
-
-        public static void RunScreen(Action screen) // detta kör metoden med dessa metoder också, används genom att skriva MenuHelper.RunScreen(()=> metod )
+        
+        // Kör en skärm på ett enhetligt sätt: rensa, rita loggan, kör skärmens kod och vänta på Enter.
+        // Används så här: MenuHelper.RunScreen(() => metod());
+        // Skriver man () => före metoden skickas koden med som en Action, som körs inne i RunScreen.
+        public static void RunScreen(Action screen) 
         {
             AnsiConsole.Clear();   // tom skärm innan skärmen ritas
             ShowLogo();
@@ -242,9 +245,9 @@ namespace RestaurangSystem.UI
         {
             // Rensar konsolen innan återställningsmenyn visas.
             AnsiConsole.Clear();
-           // Visar loggan överst i menyn
+            // Visar loggan överst i menyn
             ShowLogo();
-              // Visar en ruta med information om hur lösenordet återställs.
+            // Visar en ruta med information om hur lösenordet återställs.
             AnsiConsole.Write(
                 new Panel("Enter your email to reset your password")
                     .Header($"[{Accent.ToMarkup()}]Reset password[/]")
@@ -261,9 +264,9 @@ namespace RestaurangSystem.UI
             {
                 // Visar ett felmeddelande om inget konto hittas med den angivna e-postadressen.
                 ShowError("No account with that email.");
-               // Väntar tills användaren trycker Enter
+                // Väntar tills användaren trycker Enter
                 WaitForEnter();
-               // Avslutar metoden om återställningen inte kunde startas.
+                // Avslutar metoden om återställningen inte kunde startas.
                 return;
             }
 
@@ -304,7 +307,7 @@ namespace RestaurangSystem.UI
                 // Visar ett felmeddelande om återställningskoden är felaktig. 
                 ShowError("Wrong reset code.");
             }
-          // Väntar tills användaren trycker Enter
+            // Väntar tills användaren trycker Enter
             WaitForEnter();
         }
         public static void WaitForEnter(string message = "Press [bold]Enter[/] to continue...")

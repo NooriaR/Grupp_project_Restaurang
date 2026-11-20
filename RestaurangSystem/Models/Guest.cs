@@ -10,7 +10,7 @@ namespace RestaurangSystem.Models
         public List<Order> Orderhistory { get; set; } = new List<Order>();
 
         // Sparar gästens reservation.
-        public Reservation reservation { get; set; }
+        public Reservation? Reservation { get; set; }
 
         // Skapar en ny beställning.
         public void CreateOrder(List<MenuItem> menuItems)

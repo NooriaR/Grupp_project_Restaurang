@@ -19,10 +19,10 @@ namespace RestaurangSystem.Services
                 Logger.Info($"App Started Succesfully"); // skickar logg
                 StartMenuLogic(stafflist);
             }
-            catch (Exception ex)
+            catch (Exception ex) // Fångar eventuella fel som kan uppstå under körningen av programmet
             {
                 Logger.Error($"An error occurred while running the application: {ex.Message}", ex);
-                MenuHelper.ShowError($"An error occurred while running the application: {ex.Message}");
+                MenuHelper.ShowError($"An error occurred while running the application: {ex.Message}"); 
             }
 
         }

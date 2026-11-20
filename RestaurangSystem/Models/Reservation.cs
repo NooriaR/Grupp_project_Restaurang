@@ -44,9 +44,9 @@ namespace RestaurangSystem.Models
                 dataStore.AddItem(reservation);
                 dataStore.SaveToJson();
 
-                AnsiConsole.MarkupLine($"[green]Reservation created for {Markup.Escape(name)}! Id: {reservation.Id}[/]");
+                AnsiConsole.MarkupLine($"[green]Reservation created for {Markup.Escape(name)}! Id: {reservation.Id}[/]"); // Visar Id:t för bokningen
             }
-            catch (Exception ex)
+            catch (Exception ex) // Fångar eventuella fel som kan uppstå under skapandet av bokningen
             {
                 MenuHelper.ShowError("An unexpected error occurred while creating the reservation.");
                 Logger.Error($"Error while creating reservation: {ex.Message}", ex);

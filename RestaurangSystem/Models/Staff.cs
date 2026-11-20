@@ -1,6 +1,7 @@
-﻿using Spectre.Console;
+﻿﻿using RestaurangSystem.Services;
+using RestaurangSystem.UI;
+using Spectre.Console;
 using System.Text.Json.Serialization;
-﻿using RestaurangSystem.Services;
 namespace RestaurangSystem.Models
 {
     public class Staff : Users
@@ -62,7 +63,7 @@ namespace RestaurangSystem.Models
             // STEG 3: Kolla om e-posten redan används
             if (stafflist.FindItem(s => s.Email == email) != null)
             {
-                AnsiConsole.MarkupLine("[red]This email is already registered.[/]");
+                MenuHelper.ShowError("This email is already registered.");
                 return;   // avsluta metoden här
             }
 
@@ -82,7 +83,7 @@ namespace RestaurangSystem.Models
             // Kontrollerar om personalen är inloggad.
             if (!IsLoggedIn)
             {
-                AnsiConsole.MarkupLine("[red]You must be logged in to view the work schedule.[/]");
+                MenuHelper.ShowError("You must be logged in to view the work schedule.");
                 return;
             }
 

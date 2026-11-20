@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿using RestaurangSystem.UI;
+using Spectre.Console;
 using System.Text.Json;
 namespace RestaurangSystem.Services
 {
@@ -61,8 +62,8 @@ namespace RestaurangSystem.Services
             {
                 // Om ett fel uppstår under sökningen visas ett felmeddelande.
                 // ex.Message innehåller information om vad felet beror på.
-                AnsiConsole.MarkupLine($"[red]Error while searching: {ex.Message}[/]");
                 // Returnerar standardvärdet om ett fel uppstår.
+                MenuHelper.ShowError("Error while searching");
                 return default;
             }
         }
@@ -101,19 +102,19 @@ namespace RestaurangSystem.Services
             // att skriva till filen.
             catch (UnauthorizedAccessException)
             {
-                AnsiConsole.MarkupLine($"[red]Could not save: no permission to access {FilePath}.[/]");
+                MenuHelper.ShowError("You do not have permission to access this file.");
             }
             // Fångar fel som uppstår vid filhantering,
             // exempelvis om filen inte kan skrivas.
             catch (IOException ex)
             {
-                AnsiConsole.MarkupLine($"[red]Could not save the file:[/] {Markup.Escape(ex.Message)}");
+                MenuHelper.ShowError("Could not save the file.");
             }
             // Fångar andra oväntade fel som inte hanteras av
             // de tidigare catch-blocken.
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine($"[red]Unexpected error while saving:[/] {Markup.Escape(ex.Message)}");
+                MenuHelper.ShowError("An unexpected error occurred while saving.");
             }
         }
         // METOD: LoadFromJson
@@ -138,26 +139,26 @@ namespace RestaurangSystem.Services
             // Programmet visar ett meddelande om att ingen sparad data hittades.
             catch (FileNotFoundException)
             {
-                AnsiConsole.MarkupLine("[yellow]No saved data found, starting with an empty list.[/]");
+                MenuHelper.ShowError("No saved data found, starting with an empty list.");
             }
             // Hanterar fel om JSON-filen är skadad eller innehåller
             // information som inte kan omvandlas till rätt objekt.
             catch (JsonException)
             {
-                AnsiConsole.MarkupLine($"[red]The file {FilePath} is corrupted or has an invalid format. Starting with an empty list.[/]");
                 // Skapar en ny tom lista eftersom informationen inte kunde läsas.
+                MenuHelper.ShowError("The file is corrupted or has an invalid format. Starting with an empty list.");
                 items = new List<T>();
             }
             // Hanterar andra filrelaterade problem,
             // exempelvis om programmet inte kan läsa filen.
             catch (IOException ex)
             {
-                AnsiConsole.MarkupLine($"[red]Could not read the file:[/] {Markup.Escape(ex.Message)}");
+                MenuHelper.ShowError("Could not read the file.");
             }
             // Fångar övriga oväntade fel som kan uppstå vid inläsningen.
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine($"[red]Unexpected error while loading:[/] {Markup.Escape(ex.Message)}");
+                MenuHelper.ShowError("An unexpected error occurred while loading.");
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿
 using RestaurangSystem.Services;
+using RestaurangSystem.UI;
 using Spectre.Console;
 
 namespace RestaurangSystem.Models
@@ -226,7 +227,7 @@ namespace RestaurangSystem.Models
             }
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine($"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
+                MenuHelper.ShowError("An unexpected error occurred while fetching the order history.");
             }
         }
     }

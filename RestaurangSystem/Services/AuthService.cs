@@ -59,6 +59,7 @@ namespace RestaurangSystem.Services
                     return false;
                 }
                 currentStaff.IsLoggedIn = true; // sätter inloggningsstatusen till true
+                Logger.Info($"Log in: {currentStaff.Email}"); // skickar logg
 
                 return currentStaff != null; // returnerar true om currentStaff inte är null
             }

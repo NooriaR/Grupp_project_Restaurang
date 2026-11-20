@@ -7,9 +7,20 @@ namespace RestaurangSystem.Services
     {
         public static void Run()
         {
-            DataStore<Staff> stafflist = new DataStore<Staff>();
-            stafflist.LoadFromJson();
-            StartMenuLogic(stafflist);
+            try
+            {
+                // Skapar en instans av DataStore för Staff och laddar personaldata från JSON-filen
+                DataStore<Staff> stafflist = new DataStore<Staff>();
+                stafflist.LoadFromJson();
+                Logger.Info($"App Started Succesfully"); // skickar logg
+                StartMenuLogic(stafflist);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"An error occurred while running the application: {ex.Message}", ex);
+                MenuHelper.ShowError($"An error occurred while running the application: {ex.Message}");
+            }
+
         }
         public static void StaffMenuLogic() // Det här är logiken för personalmenyn, som körs när en personalmedlem är inloggad
         {
@@ -37,12 +48,15 @@ namespace RestaurangSystem.Services
                     {
                         case StaffMenuChoice.AddToMenu:
                             menu.AddMenuItem(menuDataStore);
+                            Logger.Info($"MenuItem added by: {AuthService.currentStaff.Email}");
                             break;
                         case StaffMenuChoice.RemovefromMenu:
                             menu.RemoveMenuItem(menuDataStore);
+                            Logger.Info($"MenuItem removed by: {AuthService.currentStaff.Email}");
                             break;
                         case StaffMenuChoice.UpdateitemonMenu:
                             menu.UppdateMenuItem(menuDataStore);
+                            Logger.Info($"MenuItem updated by: {AuthService.currentStaff.Email}");
                             break;
                         case StaffMenuChoice.ShowLog:
                             Logger.ShowLog();
@@ -84,6 +98,7 @@ namespace RestaurangSystem.Services
                         // Gör en order för att skapa en beställning
                         case GuestMenuChoice.CreateOrder:
                             guest.CreateOrder(menu.MenuItems);
+                            Logger.Info($"Order created by: {guest.Name}"); // skickar logg
                             break;
                         // Visar menyn för gästen
                         case GuestMenuChoice.ShowMenu:
@@ -94,12 +109,14 @@ namespace RestaurangSystem.Services
                             break;
                         case GuestMenuChoice.MakeReservation:
                             guest.MakeReservation();
+                            Logger.Info($"Reservation made by: {guest.Name}"); // skickar logg
                             break;
                         case GuestMenuChoice.ShowReservation:
                             guest.ShowReservation();
                             break;
                         case GuestMenuChoice.CancelReservation:
                             guest.CancelReservation();
+                            Logger.Info($"Reservation canceled by: {guest.Name}"); // skickar logg
                             break;
                     }
                 });
@@ -126,6 +143,7 @@ namespace RestaurangSystem.Services
                         case "Register":
                             Staff staff = new Staff();
                             staff.Register();
+                            Logger.Info($"Staff registered: {staff.Email}"); // skickar logg
                             break;
                         case "Back":
                             isRunning = false;
@@ -154,6 +172,7 @@ namespace RestaurangSystem.Services
                     case StartMenuChoice.Exit:
                         // Avsluta programmet.
                         Console.WriteLine("Exiting the program...");
+                        Logger.Info($"Application closed"); // skickar logg
                         isRunning = false;
                         return;
                 }

@@ -49,6 +49,7 @@ namespace RestaurangSystem.Models
             catch (Exception ex)
             {
                 MenuHelper.ShowError("An unexpected error occurred while creating the reservation.");
+                Logger.Error($"Error while creating reservation: {ex.Message}", ex);
             }
 
         }

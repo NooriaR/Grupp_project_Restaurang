@@ -227,6 +227,7 @@ namespace RestaurangSystem.Models
             }
             catch (Exception ex)
             {
+                Logger.Error($"Error while showing order history: {ex.Message}", ex);
                 MenuHelper.ShowError("An unexpected error occurred while fetching the order history.");
             }
         }

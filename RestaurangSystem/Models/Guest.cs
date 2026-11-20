@@ -12,7 +12,7 @@ namespace RestaurangSystem.Models
         public List<Order> Orderhistory { get; set; } = new List<Order>();
 
         // Sparar gästens reservation.
-        public Reservation reservation { get; set; }
+        public Reservation? reservation { get; set; }
 
         public void CreateOrder(List<MenuItem> menuItems)
         {
@@ -149,7 +149,34 @@ namespace RestaurangSystem.Models
                 AnsiConsole.WriteLine($"Order {order.Id}: {order.Status}");
             }
         }
+        // Tar bort gästens reservation från datalagret.
+        public void DeleteReservation()
+        {
+            // Skapar ett DataStore-objekt för att hantera reservationer.
+            DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
 
+            // Hämtar sparade reservationer från JSON-filen.
+            reservationDataStore.LoadFromJson();
+
+            // Kontrollera att gästen har en reservation innan vi använder dess ID.
+            if (reservation == null)
+            {
+                return;
+            }
+
+            // Söker efter reservationen med hjälp av dess unika ID.
+            Reservation? savedReservation = reservationDataStore.FindItem(r => r.Id == reservation.Id);
+
+            // Kontrollerar om reservationen hittades i datalagret.
+            if (savedReservation != null)
+            {
+                // Tar bort reservationen från datalagret.
+                reservationDataStore.RemoveItem(savedReservation);
+
+                // Sparar ändringarna i JSON-filen så att reservationen inte finns kvar.
+                reservationDataStore.SaveToJson();
+            }
+        }
         // Avbryter gästens reservation.
         public void CancelReservation()
         {

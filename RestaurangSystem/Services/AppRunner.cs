@@ -7,12 +7,24 @@ namespace RestaurangSystem.Services
     {
         public static void Run()
         {
-            //objekt som heter stafflist skapas i datastore
-            //stafflist hämtar data från json
-            //I metoden startMenuLogic används startlist
-            DataStore<Staff> stafflist = new DataStore<Staff>();
-            stafflist.LoadFromJson();
-            StartMenuLogic(stafflist);
+
+        }
+            try
+            {
+                //objekt som heter stafflist skapas i datastore
+                //stafflist hämtar data från json
+                //I metoden startMenuLogic används startlist
+                DataStore<Staff> stafflist = new DataStore<Staff>();
+                stafflist.LoadFromJson();
+                Logger.Info($"App Started Succesfully"); // skickar logg
+                StartMenuLogic(stafflist);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"An error occurred while running the application: {ex.Message}", ex);
+                MenuHelper.ShowError($"An error occurred while running the application: {ex.Message}");
+            }
+
         }
         public static void StaffMenuLogic() // Det här är logiken för personalmenyn, som körs när en personalmedlem är inloggad
         {
@@ -60,17 +72,20 @@ namespace RestaurangSystem.Services
                             // Anropar metoden AddMenuItem för att lägga till en ny maträtt
                             // i restaurangens meny.
                             menu.AddMenuItem(menuDataStore);
+                            Logger.Info($"MenuItem added by: {AuthService.currentStaff.Email}");
                             break;
 
                         case StaffMenuChoice.RemovefromMenu:
                             // Anropar metoden RemoveMenuItem för att ta bort
                             // en befintlig maträtt från restaurangens meny. 
                             menu.RemoveMenuItem(menuDataStore);
+                            Logger.Info($"MenuItem removed by: {AuthService.currentStaff.Email}");
                             break;
                         case StaffMenuChoice.UpdateitemonMenu:
                             // Anropar UppdateMenuItem för att ändra information
                             // om en maträtt som redan finns på menyn.
                             menu.UppdateMenuItem(menuDataStore);
+                            Logger.Info($"MenuItem updated by: {AuthService.currentStaff.Email}");
                             break;
                         case StaffMenuChoice.ShowLog:
                             Logger.ShowLog();
@@ -127,6 +142,7 @@ namespace RestaurangSystem.Services
                         // Gör en order för att skapa en beställning
                         case GuestMenuChoice.CreateOrder:
                             guest.CreateOrder(menu.MenuItems);
+                            Logger.Info($"Order created by: {guest.Name}"); // skickar logg
                             break;
                         // Visar menyn för gästen
                         case GuestMenuChoice.ShowMenu:
@@ -140,6 +156,7 @@ namespace RestaurangSystem.Services
                         // Anropar metoden för att skapa en bordsreservation.
                         case GuestMenuChoice.MakeReservation:
                             guest.MakeReservation();
+                            Logger.Info($"Reservation made by: {guest.Name}"); // skickar logg
                             break;
                         // Visar gästens befintliga reservationer.
                         case GuestMenuChoice.ShowReservation:
@@ -148,6 +165,7 @@ namespace RestaurangSystem.Services
                         // Anropar metoden för att avboka en befintlig reservation.
                         case GuestMenuChoice.CancelReservation:
                             guest.CancelReservation();
+                            Logger.Info($"Reservation canceled by: {guest.Name}"); // skickar logg
                             break;
                     }
                 });
@@ -197,6 +215,7 @@ namespace RestaurangSystem.Services
                             // Anropar Register-metoden som hanterar registreringen
                             // och samlar in den nya personalmedlemmens information.  
                             staff.Register();
+                            Logger.Info($"Staff registered: {staff.Email}"); // skickar logg
                             break;
                         case "Back":
                             // Ändrar isRunning till false.
@@ -244,6 +263,7 @@ namespace RestaurangSystem.Services
                     case StartMenuChoice.Exit:
                         // Avsluta programmet.
                         Console.WriteLine("Exiting the program...");
+                        Logger.Info($"Application closed"); // skickar logg
                         isRunning = false;
                         return;
                 }

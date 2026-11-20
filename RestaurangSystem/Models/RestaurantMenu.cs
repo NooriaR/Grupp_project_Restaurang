@@ -73,6 +73,7 @@ namespace RestaurangSystem.Models
             {
                 // Fångar oväntade fel så att programmet inte kraschar
                 AnsiConsole.MarkupLine($"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
+                Logger.Error($"Error while removing menu item: {ex.Message}", ex);
             }
         }
         // Ändrar namn och pris på en maträtt som redan finns i menyn
@@ -114,6 +115,7 @@ namespace RestaurangSystem.Models
             catch (Exception ex)
             {
                 AnsiConsole.MarkupLine($"[red]Something went wrong: {ex.Message}[/]");
+                Logger.Error($"Error while updating menu item: {ex.Message}", ex);
             }
         }
         // Skriver ut alla maträtter sorterade efter pris, billigast först

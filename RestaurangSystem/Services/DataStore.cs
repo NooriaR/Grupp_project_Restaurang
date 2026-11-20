@@ -64,6 +64,7 @@ namespace RestaurangSystem.Services
                 // ex.Message innehåller information om vad felet beror på.
                 // Returnerar standardvärdet om ett fel uppstår.
                 MenuHelper.ShowError("Error while searching");
+                Logger.Error($"Error while searching for item: {ex.Message}", ex);
                 return default;
             }
         }
@@ -103,17 +104,20 @@ namespace RestaurangSystem.Services
             catch (UnauthorizedAccessException)
             {
                 MenuHelper.ShowError("You do not have permission to access this file.");
+                Logger.Error($"UnauthorizedAccessException while saving to {FilePath}");
             }
             // Fångar fel som uppstår vid filhantering,
             // exempelvis om filen inte kan skrivas.
             catch (IOException ex)
             {
                 MenuHelper.ShowError("Could not save the file.");
+                Logger.Error($"IOException while saving to {FilePath}", ex);
             }
             // Fångar andra oväntade fel som inte hanteras av
             // de tidigare catch-blocken.
             catch (Exception ex)
             {
+                Logger.Error($"Unexpected error while saving to {FilePath}", ex);
                 MenuHelper.ShowError("An unexpected error occurred while saving.");
             }
         }
@@ -139,6 +143,7 @@ namespace RestaurangSystem.Services
             // Programmet visar ett meddelande om att ingen sparad data hittades.
             catch (FileNotFoundException)
             {
+                Logger.Warning($"No saved data found for {FilePath}");
                 MenuHelper.ShowError("No saved data found, starting with an empty list.");
             }
             // Hanterar fel om JSON-filen är skadad eller innehåller
@@ -146,6 +151,7 @@ namespace RestaurangSystem.Services
             catch (JsonException)
             {
                 // Skapar en ny tom lista eftersom informationen inte kunde läsas.
+                Logger.Warning($"JsonException while loading from {FilePath}");
                 MenuHelper.ShowError("The file is corrupted or has an invalid format. Starting with an empty list.");
                 items = new List<T>();
             }
@@ -153,11 +159,13 @@ namespace RestaurangSystem.Services
             // exempelvis om programmet inte kan läsa filen.
             catch (IOException ex)
             {
+                Logger.Error($"IOException while loading from {FilePath}", ex);
                 MenuHelper.ShowError("Could not read the file.");
             }
             // Fångar övriga oväntade fel som kan uppstå vid inläsningen.
             catch (Exception ex)
             {
+                Logger.Error($"Unexpected error while loading from {FilePath}", ex);
                 MenuHelper.ShowError("An unexpected error occurred while loading.");
             }
         }

@@ -18,7 +18,7 @@ namespace RestaurangSystem.Services
         // Låset gör att två anrop inte kan skriva till filen samtidigt
         private static readonly object Lock = new();
 
-        private static readonly JsonSerializerOptions Options = new()
+        private static readonly JsonSerializerOptions Options = new() // inställningar för JSON-serialisering
         {
             WriteIndented = true,                           // snyggt formaterad JSON
             Converters = { new JsonStringEnumConverter() }  // skriver "Warning" istället för en siffra

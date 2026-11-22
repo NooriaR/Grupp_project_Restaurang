@@ -34,11 +34,11 @@ public class Order : IIdentify
     // Tar bort en maträtt från beställningen med hjälp av dess ID.
     public void RemoveFromOrder(int id)
     {
-        var item = OrderedItems.Find(menuitem => menuitem.Id == id);
+        var item = OrderedItems.Find(menuitem => menuitem.Id == id); // Hittar maträtten med det angivna ID:t
 
         if (item != null)
         {
-            OrderedItems.Remove(item);
+            OrderedItems.Remove(item); // Tar bort maträtten från beställningen
         }
     }
 

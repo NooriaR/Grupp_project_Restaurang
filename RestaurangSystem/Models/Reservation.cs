@@ -1,5 +1,8 @@
-﻿using RestaurangSystem.Services;
+﻿
+using RestaurangSystem.Services;
 using Spectre.Console;
+using RestaurangSystem.UI;
+
 namespace RestaurangSystem.Models
 {
     public class Reservation : IIdentify
@@ -9,7 +12,7 @@ namespace RestaurangSystem.Models
         public int Id { get; set; }
         public int GuestAmount { get; set; }
 
-
+        // Skapar en ny bokning och sparar den i JSON.
         public void CreateReservation(DataStore<Reservation> dataStore)
         {
             try
@@ -47,7 +50,11 @@ namespace RestaurangSystem.Models
             }
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine($"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
+                // Visar ett tydligt felmeddelande för användaren.
+                MenuHelper.ShowError("An unexpected error occurred while creating the reservation.");
+
+                // Skriver felet till loggen.
+                Logger.Error($"Error while creating reservation: {ex.Message}", ex);
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿
+using RestaurangSystem.UI;
 using RestaurangSystem.Services;
 using Spectre.Console;
 
@@ -139,6 +139,7 @@ namespace RestaurangSystem.Models
         // Visar gästens reservation.
         public void ShowReservation()
         {
+            // Kontrollerar om gästen har en reservation.
             if (reservation == null)
             {
                 AnsiConsole.MarkupLine("[red]You have no reservation.[/]");
@@ -149,19 +150,26 @@ namespace RestaurangSystem.Models
             AnsiConsole.WriteLine($"Number of guests: {reservation.GuestAmount}");
         }
 
-        // Visar status för alla gästers beställningar.
+        // Visar status för gästens egna beställningar.
         public void ShowOrderStatus()
         {
+            // Laddar sparade beställningar från JSON.
             DataStore<Order> orderDataStore = new DataStore<Order>();
             orderDataStore.LoadFromJson();
 
-            if (orderDataStore.items.Count == 0)
+            // Hämtar endast beställningar där gästen finns med.
+            var guestOrders = orderDataStore.items
+                .Where(o => o.Guests.Any(g =>
+                    string.Equals(g.Name, Name, StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+
+            if (guestOrders.Count == 0)
             {
                 AnsiConsole.MarkupLine("[yellow]You have no orders.[/]");
                 return;
             }
 
-            foreach (Order order in orderDataStore.items)
+            foreach (Order order in guestOrders)
             {
                 AnsiConsole.WriteLine($"Order {order.Id}: {order.Status}");
             }
@@ -170,26 +178,33 @@ namespace RestaurangSystem.Models
         // Tar bort gästens reservation från datalagret.
         public void DeleteReservation()
         {
+            // Skapar ett DataStore-objekt för att hantera reservationer.
             DataStore<Reservation> reservationDataStore = new DataStore<Reservation>();
 
+            // Hämtar sparade reservationer från JSON-filen.
             reservationDataStore.LoadFromJson();
 
+            // Kontrollerar att gästen har en reservation.
             if (reservation == null)
             {
                 return;
             }
 
+            // Söker efter reservationen med hjälp av dess unika ID.
             Reservation? savedReservation = reservationDataStore.FindItem(
                 r => r.Id == reservation.Id);
 
             if (savedReservation != null)
             {
+                // Tar bort reservationen från datalagret.
                 reservationDataStore.RemoveItem(savedReservation);
+
+                // Sparar ändringarna i JSON-filen.
                 reservationDataStore.SaveToJson();
             }
         }
 
-        // Avbryter gästens reservation.
+        // Avbokar gästens reservation.
         public void CancelReservation()
         {
             if (reservation == null)
@@ -198,10 +213,13 @@ namespace RestaurangSystem.Models
                 return;
             }
 
+            // Tar bort reservationen från JSON-filen.
             DeleteReservation();
 
+            // Tar bort kopplingen mellan gästen och reservationen.
             reservation = null;
 
+            // Bekräftar att reservationen har avbokats.
             AnsiConsole.MarkupLine("[green]Your reservation has been cancelled.[/]");
         }
 
@@ -213,6 +231,7 @@ namespace RestaurangSystem.Models
                 // Laddar beställningar från JSON.
                 dataStore.LoadFromJson();
 
+                // Kontrollerar om det finns några beställningar.
                 if (dataStore.items.Count == 0)
                 {
                     AnsiConsole.MarkupLine("[yellow]No orders found.[/]");
@@ -222,6 +241,7 @@ namespace RestaurangSystem.Models
                 // Sorterar så att den senaste beställningen visas först.
                 var orders = dataStore.items.OrderByDescending(o => o.OrderTime);
 
+                // Skapar tabellen.
                 var table = new Table();
                 table.AddColumn("Id");
                 table.AddColumn("Time");
@@ -231,6 +251,7 @@ namespace RestaurangSystem.Models
 
                 foreach (var order in orders)
                 {
+                    // Räknar ihop priset för alla rätter i beställningen.
                     decimal total = order.OrderedItems.Sum(i => i.Price);
 
                     table.AddRow(
@@ -241,12 +262,15 @@ namespace RestaurangSystem.Models
                         $"{total:F2} kr");
                 }
 
+                // Skriver ut den färdiga tabellen.
                 AnsiConsole.Write(table);
             }
             catch (Exception ex)
             {
-                AnsiConsole.MarkupLine(
-                    $"[red]Something went wrong: {Markup.Escape(ex.Message)}[/]");
+                Logger.Error($"Error while showing order history: {ex.Message}", ex);
+
+                // Visar ett felmeddelande för användaren.
+                MenuHelper.ShowError("An unexpected error occurred while fetching the order history.");
             }
         }
     }

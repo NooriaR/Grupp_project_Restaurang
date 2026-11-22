@@ -1,6 +1,7 @@
-﻿using Spectre.Console;
+﻿﻿using RestaurangSystem.Services;
+using RestaurangSystem.UI;
+using Spectre.Console;
 using System.Text.Json.Serialization;
-﻿using RestaurangSystem.Services;
 namespace RestaurangSystem.Models
 {
     public class Staff : Users
@@ -18,30 +19,52 @@ namespace RestaurangSystem.Models
         public WorkSchedule Schedule { get; set; } = new WorkSchedule();
 
 
+        // Visar alla sparade beställningar i en tabell i terminalen
         public void ShowOrders()
         {
+            // Skapar ett nytt datalager för beställningar och läser in sparad data från JSON-filen
             DataStore<Order> orderDataStore = new DataStore<Order>();
             orderDataStore.LoadFromJson();
+
+            // Hämtar listan med alla beställningar
             var orders = orderDataStore.items;
+
+            // Om det inte finns några beställningar visas ett meddelande och metoden avslutas
             if (orders.Count == 0)
             {
                 AnsiConsole.MarkupLine("[yellow]No orders found.[/]");
                 return;
             }
+
+            // Skapar tabellen och lägger till en kolumnrubrik för varje sorts information
             var table = new Table();
             table.AddColumn("Order ID");
             table.AddColumn("Guest Name");
             table.AddColumn("Items");
             table.AddColumn("Total Price");
             table.AddColumn("Status");
+
+            // Går igenom varje beställning och lägger till en rad i tabellen
             foreach (var order in orders)
             {
+                // Slår ihop namnen på alla rätter till en text, separerade med komma
                 string items = string.Join(", ", order.OrderedItems.Select(i => i.Name));
-                string guests = string.Join("\n", order.Guests.Select(g => Markup.Escape(g.Name)));
-                table.AddRow(order.Id.ToString(), guests, items, $"{order.CalculateSumPrice()} kr", order.Status.ToString());
-            }
-            AnsiConsole.Write(table);
 
+                // Slår ihop gästernas namn till en text, ett namn per rad
+                // Markup.Escape skyddar mot tecken som kan förstöra färgkoderna
+                string guests = string.Join("\n", order.Guests.Select(g => Markup.Escape(g.Name)));
+
+                // Lägger till raden. Värdena måste komma i samma ordning som kolumnerna
+                table.AddRow(
+                    order.Id.ToString(),
+                    guests,
+                    items,
+                    $"{order.CalculateSumPrice()} kr",
+                    order.Status.ToString());
+            }
+
+            // Skriver ut den färdiga tabellen
+            AnsiConsole.Write(table);
         }
 
         public void Register()
@@ -62,7 +85,7 @@ namespace RestaurangSystem.Models
             // STEG 3: Kolla om e-posten redan används
             if (stafflist.FindItem(s => s.Email == email) != null)
             {
-                AnsiConsole.MarkupLine("[red]This email is already registered.[/]");
+                MenuHelper.ShowError("This email is already registered.");
                 return;   // avsluta metoden här
             }
 
@@ -82,7 +105,7 @@ namespace RestaurangSystem.Models
             // Kontrollerar om personalen är inloggad.
             if (!IsLoggedIn)
             {
-                AnsiConsole.MarkupLine("[red]You must be logged in to view the work schedule.[/]");
+                MenuHelper.ShowError("You must be logged in to view the work schedule.");
                 return;
             }
 

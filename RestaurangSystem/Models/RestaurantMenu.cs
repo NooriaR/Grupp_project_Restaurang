@@ -1,5 +1,4 @@
-﻿
-using RestaurangSystem.Services;
+﻿using RestaurangSystem.Services;
 using RestaurangSystem.UI;
 using Spectre.Console;
 
@@ -38,10 +37,10 @@ namespace RestaurangSystem.Models
                 // Laddar tidigare maträtter från JSON.
                 dataStore.LoadFromJson();
 
-                // Visar listan över maträtter med deras ID.
+                // Visar listan med maträtter och deras ID.
                 dataStore.GetIds();
 
-                // Frågar användaren hur maträtten ska sökas.
+                // STEG 1: Låt användaren välja hur maträtten ska sökas.
                 var searchBy = AnsiConsole.Prompt(
                     new SelectionPrompt<string>()
                         .Title("How do you want to find the item?")
